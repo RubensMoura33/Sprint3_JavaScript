@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- Criar um formulario para receber o nome do usuario -->
+    <fieldset>
+    <form onsubmit="Exibir()">
+    <label for="usuario">Nome usuario</label>
+        <input type="text" id="usuario">
+        <br><br>
+    <!-- e substituir por um nickname -->
+    <label for="nickname">Nickname</label>
+        <input type="text" id="nickname">
+
+        <p>Ola: <strong id="exibe"></strong></p>
+    <!-- ao clicar do botao o nickname deve ser exibido na tela -->
+    <button onclick="Exibir()">Cadastrar</button>
+</form>
+</fieldset>
+    <script>
+        function Exibir()
+        {
+            event.preventDefault();
+            let usuario = document.getElementById('usuario').value;
+            let nickname = document.getElementById('nickname').value;
+            document.getElementById('exibe').innerText = nickname;
+            return;
+        }
+
+    </script>
+    
+</body>
+</html>
