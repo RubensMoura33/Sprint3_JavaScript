@@ -14,8 +14,69 @@
         frutas.push('mamao')
         frutas.push('amora', 'uva')
         console.log(`Quantidade de frutas : ${frutas.length}`);
+
         frutas.sort()
         
+        console.log();
+        console.log();
+
+        console.log(frutas[0]);
+        console.log(frutas[2]);
+        console.log(frutas[5]);
+        console.log(frutas[6]);
+        
+        // for (let index = 0; index < frutas.length; index++) {
+        //     console.log(`Frutas ${index +1} ${frutas[index]}`);
+            
+        // }
+
+        // frutas.forEach(function(fruta, i){
+        //     console.log(`fruta ${i+1} ${fruta}`);
+        // })
+        
+        let pratileira = [
+            'Cerveja',
+            'Coca-cola',
+            'Agua',
+            'Gatorade',
+            'Corote',
+            'H20',
+            'Guarana',
+            'Tubaina'
+        ];
+
+        let bebida = pratileira[7]
+
+        switch (bebida) {
+            case 'Cerveja':
+                console.log('Achei sua cerveja');
+                 break;
+            case 'Coca-cola':
+                console.log('Achei sua Coca-cola');
+                 break;
+            case 'Agua':
+                console.log('Achei sua Agua');
+                 break;
+            case 'Gatorade':
+                console.log('Achei seu Gatorade');
+                 break;
+            case 'Corote':
+                console.log('Achei seu corote');
+                 break;
+            case 'H20':
+                console.log('Achei seu H20');
+                 break;
+            case 'Guarana':
+                console.log('Achei seu Guarana');
+                 break;
+            case 'Cerveja':
+                console.log('Achei sua cerveja');
+                 break;
+        
+            default:(console.log('Nao temos essa bebida'));
+                break;
+        }
+
     </script>
 </body>
 </html>

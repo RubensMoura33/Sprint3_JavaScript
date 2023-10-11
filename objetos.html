@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+        //objeto literal
+        let rubens = {
+            nome : 'Rubens',
+            sobrenome : 'Moura Cavalcanti',
+            idade : 18
+        }
+        rubens.cpf = '123456789'
+
+        //objeto tradicional
+        let gabriel = new Object();
+        gabriel.nome = 'Gabriel',
+        gabriel.sobrenome = 'Victor'
+
+        console.log(rubens);
+        console.log(gabriel);
+
+        let pessoas = ['Rubens', 'GabrielV', 'Pedro', 'GabrielR', 'Kauan']
+        console.log(pessoas);
+
+        pessoas.forEach(function(pessoa, i){
+            console.log(`Pessoa ${i + 1} Nome: ${pessoa}` );
+        })
+
+    </script>
+</body>
+</html>
