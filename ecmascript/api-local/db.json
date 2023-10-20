@@ -1,9 +1,56 @@
 {
-    "posts": [
-      { "id": 1, "title": "json-server", "author": "typicode" }
-    ],
-    "comments": [
-      { "id": 1, "body": "some comment", "postId": 1 }
-    ],
-    "profile": { "name": "typicode" }
+  "contatos" : [
+
+  ],
+
+  "TipoEventos":[
+    {
+      "id":1,
+      "titulo":"SQL Server",
+      "instituicao":"SENAI",
+      "DataEvento" : "28/01/2024"
+    },
+    {
+      "id":2,
+      "titulo":"Java Script",
+      "instituicao":"SENAI",
+      "DataEvento" : "11/08/2024"
+    },
+    {
+      "id":3,
+      "titulo":"C#",
+      "instituicao":"SENAI",
+      "DataEvento" : "17/04/2024"
+    }
+  ],
+
+
+
+  "posts": [
+    {
+      "id": 1,
+      "title": "json-server",
+      "author": "typicode"
+    },
+    {
+      "title": "Rubao zika do baile",
+      "author": "Rubens",
+      "id": 2
+    },
+    {
+      "id": 4,
+      "title": "Gabriel",
+      "author": "Gab"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "body": "some comment",
+      "postId": 1
+    }
+  ],
+  "profile": {
+    "name": "typicode"
   }
+}
