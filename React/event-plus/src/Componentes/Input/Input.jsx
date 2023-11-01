@@ -1,14 +1,19 @@
 import React from 'react';
 
-const Input = () => {
+const Input = ({type, placeholder, name, id, value, onChange}) => {
     return (
-        <div>
+        <>
             <input
              type="text" 
              id ='numero1'
             name='numero1' 
-            placeholder='Primeiro numero' />
-        </div>
+            value={value}
+            placeholder='Primeiro numero' 
+            onChange={onChange}
+            />
+
+            <span>{value}</span>
+        </>
     );
 };
 

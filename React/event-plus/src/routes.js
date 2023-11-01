@@ -7,11 +7,13 @@ import Eventos from "./Pages/Eventos/Eventos"
 import TipoEventos from "./Pages/TipoEventos/TipoEventos"
 import Login from "./Pages/Login/Login"
 import TestePage from './Pages/TestePage/TestePage';
+// import Header from './Componentes/Header copy/Header';
 
 
 const Rotas = () => {
     return (
         <BrowserRouter>
+        {/* <Header /> */}
         <Routes>
             <Route element={<HomePage />} path='/' exact />
             <Route element={<Eventos />} path='/eventos'/>
@@ -19,6 +21,7 @@ const Rotas = () => {
             <Route element={<TipoEventos />} path='/tipoevento'/>
             <Route element={<TestePage />} path='/teste'/>
         </Routes>
+        
         </BrowserRouter>
     );
 };

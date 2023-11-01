@@ -1,19 +1,21 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Container from '../Container/Container'
+import './Header.css'
+import Nav from '../Nav/Nav'
+import PerfilUsuario from '../PerfilUsuario/PerfilUsuario'
+import menubar from '../../assets/images/menubar.png'
+
+
+
+
 const Header = () => {
     return (
-        <header>
-            <nav>
-                <Link to={'/'}>Home</Link>
-                <br /> 
-                <Link to={'/eventos'}>Eventos</Link>
-                <br />
-                <Link to={'/login'}>Login</Link>
-                <br />
-                <Link to={'/tipoevento'}>TiposEvento</Link>
-                <br />
-                <Link to={'/teste'}>TestePage</Link>
-            </nav>
+        <header className='headerpage'>
+            <Container>
+                <div className="header-flex">
+                    <img src={menubar} alt='imagem menu barras. Serve para exibir ou esconder o menu no samartphone'/>
+                </div>
+            </Container>
         </header>
     );
 };
