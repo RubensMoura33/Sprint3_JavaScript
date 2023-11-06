@@ -13,15 +13,13 @@ import TestePage from './Pages/TestePage/TestePage';
 const Rotas = () => {
     return (
         <BrowserRouter>
-        {/* <Header /> */}
-        <Routes>
-            <Route element={<HomePage />} path='/' exact />
-            <Route element={<Eventos />} path='/eventos'/>
-            <Route element={<Login />} path='/login'/>
-            <Route element={<TipoEventos />} path='/tipoevento'/>
-            <Route element={<TestePage />} path='/teste'/>
-        </Routes>
-        
+            <Routes>
+                <Route element={<HomePage />} path='/' exact />
+                <Route element={<Eventos />} path='/eventos'/>
+                <Route element={<Login />} path='/login'/>
+                <Route element={<TipoEventos />} path='/tipoevento'/>
+                <Route element={<TestePage />} path='/teste'/>
+            </Routes>
         </BrowserRouter>
     );
 };

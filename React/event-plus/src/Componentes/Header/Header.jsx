@@ -14,6 +14,11 @@ const Header = () => {
             <Container>
                 <div className="header-flex">
                     <img src={menubar} alt='imagem menu barras. Serve para exibir ou esconder o menu no samartphone'/>
+                
+                   <Nav />
+
+                   <PerfilUsuario/>
+
                 </div>
             </Container>
         </header>

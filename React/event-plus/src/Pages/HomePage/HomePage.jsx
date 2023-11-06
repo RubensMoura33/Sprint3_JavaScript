@@ -1,6 +1,6 @@
 import React from 'react';
 import Header from '../../Componentes/Header/Header';
-const Home = () => {
+const HomePage = () => {
     return (
         <div>
             <Header/>
@@ -9,4 +9,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default HomePage;
