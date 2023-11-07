@@ -1,11 +1,15 @@
 import React from 'react';
 import './EventosPage.css'
+import Titulo from '../../components/Titulo/Titulo';
+
+
 
 const EventosPage = () => {
     return (
-        <div>
-            <h1>Eventos</h1>
-        </div>
+        
+        <Titulo
+        titleText="My eventos page"
+        />
     );
 };
 
