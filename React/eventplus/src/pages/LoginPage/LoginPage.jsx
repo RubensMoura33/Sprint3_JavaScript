@@ -1,15 +1,15 @@
 import React from 'react';
 import './LoginPage.css'
-import Titulo from "../../components/Titulo/Titulo"
-import Banner from '../../components/Banner/Banner';
+import Title from '../../components/Title/Title'
 
 
 const LoginPage = () => {
     return (
-        
-        <Titulo
-        titleText=" My LoginPage"
-        />
+        <div>
+            <Title
+           titleText="Login Page"
+           />
+        </div>
     );
 };
 

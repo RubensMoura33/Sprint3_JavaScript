@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import Botao from '../../components/Botao/Botao';
-// import Header from '../../components/Header/Header';
 import Input from '../../components/Input/Input';
-import Titulo from '../../components/Titulo/Titulo';
+import Title from '../../components/Title/Title'
 
 
 const TestePage = () => {
@@ -13,12 +12,16 @@ const TestePage = () => {
 
     function handleCalcular(e) {
         e.preventDefault();
-        setTotal(parseFloat(n1) * parseFloat(n2));
+        setTotal(parseFloat(n1) + parseFloat(n2));
     }
 
     return (
         <div>
-                
+
+            <Title
+           titleText="Teste Page"
+           />
+
             <h1>Página de Poc`s</h1>
             <h2>Calculator</h2>
 

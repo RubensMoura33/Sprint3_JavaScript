@@ -1,15 +1,15 @@
 import React from 'react';
-import Titulo from '../../components/Titulo/Titulo';
 import './TipoEventosPage.css'
+import Title from '../../components/Title/Title'
 
 
 const TipoEventosPage = () => {
     return (
-        
-        <Titulo
-        titleText="Tipos de evento"
-        />
-        
+        <div>
+            <Title
+           titleText="Tipos Evento Page"
+           />
+        </div>
     );
 };
 

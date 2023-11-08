@@ -1,7 +1,7 @@
 import React from 'react';
-import "./MainContent.css"
+import './MainContent.css'
 
-const MainContent = ( {children} ) => {
+const Main = ({children}) => {
     return (
         <main className='main-content'>
             {children}
@@ -9,4 +9,4 @@ const MainContent = ( {children} ) => {
     );
 };
 
-export default MainContent;
+export default Main;

@@ -9,7 +9,7 @@
     src: url(../../assets/fonts/Poppins/Poppins-Regular.ttf);
 }
 
-.navbar {
+.navbar{
     position: fixed;
     top: 0;
     left: -91vw;
@@ -84,8 +84,7 @@
         position: static;
         width: 70%;
         height: 85px;
-        
-        
+        padding:0;
 
         display: flex;
         flex-direction: row;
