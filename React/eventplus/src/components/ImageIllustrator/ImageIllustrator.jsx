@@ -1,10 +1,13 @@
 import React from 'react';
 import './ImageIllustrator.css'
 import tipoEventoImage from '../../assets/images/tipo-evento.svg'
-import eventoImage from '../../assets/images/'
-import defaultImage from '../../assets/images/'
+import eventoImage from '../../assets/images/evento.svg'
+import defaultImage from '../../assets/images/default-image.jpeg'
 
 const ImageIllustrator = ({alteText, imageName, additionalClass}) => {
+
+let imageResource;
+
     switch (imageName) {
         case 'tipo-evento':
             imageResource = tipoEventoImage
@@ -14,13 +17,15 @@ const ImageIllustrator = ({alteText, imageName, additionalClass}) => {
             break;
     
         default:
+            imageResource = defaultImage
             break;
     }
     return (
         <figure className='ilustrator-box'>
             <img 
             src={imageResource} 
-            alt="" 
+            alt={alteText}
+            className={`illustrator-box__image ${additionalClass}`} 
             />
         </figure>
     );
