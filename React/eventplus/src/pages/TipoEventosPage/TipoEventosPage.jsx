@@ -29,7 +29,9 @@ const TipoEventosPage = () => {
                 console.log(error);
             }
         }
-    }, [])
+
+        loadEventsType();
+    }, [tipoEventos])
 
     async function handleSubmit(e) {
         e.preventDefault();//evita o submit do formulario
@@ -41,7 +43,7 @@ const TipoEventosPage = () => {
             const retorno = await api.post(eventsTypeResource, {
                 titulo: titulo
             })
-            alert('cadastrou')
+
         } catch (error) {
             alert('Deu ruim no submit')
         }
@@ -62,9 +64,21 @@ const TipoEventosPage = () => {
     }
 
     //apaga o tipo de evento na api
-    function handleDelete(idElement) {
-        alert(`Vamos apagar o evento de id ${idElement}`)
+    async function handleDelete(idElement) {
+
+        if (window.confirm('Confirma a excludao')) {
+
+            try {
+                const promise = await api.delete(`${eventsTypeResource}/${idElement}`, { idElement })
+
+
+            } catch (error) {
+                alert('Deu ruim no submit')
+            }
+        }
     }
+
+
 
     return (
         <>
@@ -92,7 +106,6 @@ const TipoEventosPage = () => {
                                                         setTitulo(e.target.value);
                                                     }}
                                                 />
-                                                <span>{titulo}</span>
                                                 <Button
                                                     textButton="Cadastrar"
                                                     id="cadastrar"

@@ -4,7 +4,7 @@ import './TableTp.css'
 import editPen from '../../../assets/images/edit-pen.svg'
 import trashDelete from '../../../assets/images/trash-delete.svg'
 
-const Table = ( {dados, fnDelete = null, fnUpdate = null} ) => {
+const TableTp = ({ dados, fnDelete = null, fnUpdate = null }) => {
     return (
         <table className='table-data'>
             {/* cabecalho */}
@@ -17,28 +17,29 @@ const Table = ( {dados, fnDelete = null, fnUpdate = null} ) => {
             </thead>
             {/* corpo */}
             <tbody>
-                {dados.map((tp) =>{
-                    return(
+                {dados.map((tp) => {
+                    return (
                         <tr className="table-data__head-row">
-                    <td className="table-data__data table-data__data--big">
-                        Texto do tipo
-                    </td>
+                            <td className="table-data__data table-data__data--big">
+                                {tp.titulo}
+                            </td>
 
-                    <td className="table-data__data table-data__data--little">
-                        <img className="table-data__icon" src={editPen} alt="" />
-                    </td>
+                            <td className="table-data__data table-data__data--little">
+                                <img className="table-data__icon" src={editPen} alt="" onClick={fnUpdate}/>
+                            </td>
 
-                    <td className="table-data__data table-data__data--little">
-                        <img className="table-data__icon" src={trashDelete} alt="" />
-                    </td>
-                </tr>
+                            <td className="table-data__data table-data__data--little"
+                            >
+                                <img className="table-data__icon" src={trashDelete} alt="" onClick={() =>{fnDelete(tp.idTipoEvento)}} idtipoevento = {tp.idTipoEvento}/>
+                            </td>
+                        </tr>
                     )
                 })}
-                
+
             </tbody>
 
         </table>
     );
 };
 
-export default Table;
+export default TableTp;
