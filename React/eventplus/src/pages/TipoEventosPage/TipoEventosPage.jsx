@@ -8,14 +8,14 @@ import tipoEventoImage from '../../assets/images/tipo-evento.svg'
 import { Input, Button } from '../../components/FormComponents/FormComponents'
 import api, { eventsTypeResource } from '../../Services/Service';
 import TableTp from './TableTP/TableTp'
+import Notification from '../../components/Notification/Notification'
 
 const TipoEventosPage = () => {
     //STATES
     const [frmEdit, setFrmEdit] = useState(false);//esta em modo de edicao
-
     const [titulo, setTitulo] = useState("");
-
     const [tipoEventos, setTipoEventos] = useState([]);
+    const [notifyUser, setNotifyUser] = useState([])
 
     useEffect(() => {
         async function loadEventsType() {
@@ -31,7 +31,18 @@ const TipoEventosPage = () => {
         }
 
         loadEventsType();
-    }, [tipoEventos])
+    }, [])
+
+    function theMagic(textNote) {
+
+        setNotifyUser({
+            titleNote: 'Sucesso',
+            textNote,
+            imgIcon: 'Success',
+            imgAlt: 'Imagem de ilustracao de sucesso. Moca segurando um balao com simbolo de confirmacao ok.',
+            showMessage: true
+        })
+    }
 
     async function handleSubmit(e) {
         e.preventDefault();//evita o submit do formulario
@@ -43,34 +54,52 @@ const TipoEventosPage = () => {
             const retorno = await api.post(eventsTypeResource, {
                 titulo: titulo
             })
+            if (retorno.status == 201) {
+
+                theMagic("Cadastrado com sucesso")
+                const buscaEventos = await api.get(eventsTypeResource);
+                setTipoEventos(buscaEventos.data)
+            }
 
         } catch (error) {
             alert('Deu ruim no submit')
         }
     }
 
-    function handleUpdate() {
-        alert('Bora Editar');
+    async function handleUpdate(idElement) {
+
     }
 
     //cancela a tela/acao de edicao (volta para o form de cadastro)
     function editActionAbort() {
-        alert('Cancelar a tela de edicao de dados')
+        setFrmEdit(false)
     }
 
     //mostra o formulario de edicao
-    function showUpdateForm() {
-        alert('Vamos mostrar o formulario de edicao')
+    async function showUpdateForm(idElement) {
+        setFrmEdit(true)
+        try {
+            const promise = await api.get(`${eventsTypeResource}/${idElement}`, { idElement })
+            setTitulo(promise.data.titulo)
+        } catch (error) {
+
+        }
+
     }
 
     //apaga o tipo de evento na api
     async function handleDelete(idElement) {
 
-        if (window.confirm('Confirma a excludao')) {
+        if (window.confirm('Confirma a excludao?')) {
 
             try {
                 const promise = await api.delete(`${eventsTypeResource}/${idElement}`, { idElement })
+                if (promise.status == 204) {
 
+                    theMagic("Excluido com sucesso")
+                    const buscaEventos = await api.get(eventsTypeResource);
+                    setTipoEventos(buscaEventos.data)
+                }
 
             } catch (error) {
                 alert('Deu ruim no submit')
@@ -82,6 +111,7 @@ const TipoEventosPage = () => {
 
     return (
         <>
+            {<Notification{...notifyUser} setNotifyUser={setNotifyUser} />}
             <MainContent>
                 <section className="cadastro-evento-section">
                     <Container>
@@ -111,10 +141,46 @@ const TipoEventosPage = () => {
                                                     id="cadastrar"
                                                     name="cadastrar"
                                                     //formulário só será chamado pois seu type é submit
-                                                    type="submit" />
+                                                    type="submit"
+                                                />
+
                                             </>
+
+
                                         )
-                                        : (<p>Tela de Edição</p>)
+                                        :
+                                        <>
+                                            <Input
+                                                id="Titulo"
+                                                placeholdder={"Titulo"}
+                                                name={"titulo"}
+                                                type={"text"}
+                                                required={"required"}
+                                                value={titulo}
+                                                manipulationFunction={(e) => {
+                                                    setTitulo(e.target.value);
+                                                }} />
+                                            <div className="buttons-editbox">
+                                                <Button
+                                                    textButton="Atualizar"
+                                                    id="atualizar"
+                                                    name="atualizar"
+                                                    //formulário só será chamado pois seu type é submit
+                                                    type="submit"
+                                                    addtionalClass="button-component--middle"
+                                                />
+
+                                                <Button
+                                                    textButton="Cancelar"
+                                                    id="cancelar"
+                                                    name="cancelar"
+                                                    //formulário só será chamado pois seu type é submit
+                                                    type="submit"
+                                                    manipulationFunction={editActionAbort}
+                                                    addtionalClass="button-component--middle"
+                                                />
+                                            </div>
+                                        </>
                                 }
                             </form>
                         </div>
