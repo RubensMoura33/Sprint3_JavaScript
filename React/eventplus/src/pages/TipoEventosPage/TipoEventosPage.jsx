@@ -9,25 +9,37 @@ import { Input, Button } from '../../components/FormComponents/FormComponents'
 import api, { eventsTypeResource } from '../../Services/Service';
 import TableTp from './TableTP/TableTp'
 import Notification from '../../components/Notification/Notification'
+import Spinner from "../../components/Spinner/Spinner"
 
 const TipoEventosPage = () => {
     //STATES
     const [frmEdit, setFrmEdit] = useState(false);//esta em modo de edicao
     const [titulo, setTitulo] = useState("");
-    const [tipoEventos, setTipoEventos] = useState([]);
-    const [notifyUser, setNotifyUser] = useState([])
+    const [idEvento, setIdEvento] = useState(null);//para editar, por causa do evento!
+    const [tipoEventos, setTipoEventos] = useState([]);//array
+    const [notifyUser, setNotifyUser] = useState([])//Componente Notification
+    const [showSpinner, setShowSpinner] = useState(false);//Spinner Loading
 
     useEffect(() => {
         async function loadEventsType() {
+            setShowSpinner(true);
+
             try {
                 const retorno = await api.get(eventsTypeResource);
                 setTipoEventos(retorno.data)
                 console.log(retorno.data);
             }
+            
             catch (error) {
-                console.log('Erro na api');
-                console.log(error);
+                setNotifyUser({
+                    titleNote: 'Erro',
+                    textNote: 'Erro na operacao. Verifique sua conexao com a internet',
+                    imgIcon: 'danger',
+                    imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
+                    showMessage: true
+                })
             }
+            setShowSpinner(false);
         }
 
         loadEventsType();
@@ -45,9 +57,18 @@ const TipoEventosPage = () => {
     }
 
     async function handleSubmit(e) {
+        setShowSpinner(true);
         e.preventDefault();//evita o submit do formulario
         if (titulo.trim().length < 3) {
-            alert('O titulo deve ter pelo menos 3 caracteres')
+            setNotifyUser({
+                titleNote: 'Aviso',
+                textNote: 'O titulo deve conter pelo menos 3 caracteres',
+                imgIcon: 'warning',
+                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
+                showMessage: true
+
+            })
+            return;
         }
 
         try {
@@ -62,33 +83,87 @@ const TipoEventosPage = () => {
             }
 
         } catch (error) {
-            alert('Deu ruim no submit')
+            setNotifyUser({
+                titleNote: 'Erro',
+                textNote: 'Erro na operacao. Verifique sua conexao com a internet',
+                imgIcon: 'warning',
+                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
+                showMessage: true
+            })
         }
+        setShowSpinner(false);
     }
 
-    async function handleUpdate(idElement) {
+    async function handleUpdate(e) {
+        setShowSpinner(true);
+        e.preventDefault();
+        if (titulo.trim().length < 3) {
+            setNotifyUser({
+                titleNote: 'Aviso',
+                textNote: 'O titulo deve conter pelo menos 3 caracteres',
+                imgIcon: 'warning',
+                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
+                showMessage: true
 
+            })
+            return;
+        }
+        try {
+            const promise = await api.put(eventsTypeResource + '/' + idEvento, { titulo: titulo }) // o id esta no state
+
+            if (promise.status == 204) {
+                setFrmEdit(false)
+                setTitulo("")//reseta as variaveis
+                setIdEvento(null)//reseta as variaveis
+                theMagic("Atualizado com sucesso")
+                const buscaEventos = await api.get(eventsTypeResource);
+                setTipoEventos(buscaEventos.data)
+            }
+        } catch (error) {
+            setNotifyUser({
+                titleNote: 'Erro',
+                textNote: 'Erro na operacao. Verifique sua conexao com a internet',
+                imgIcon: 'warning',
+                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
+                showMessage: true
+            })
+        }
+        setShowSpinner(false);
     }
 
     //cancela a tela/acao de edicao (volta para o form de cadastro)
     function editActionAbort() {
+        setShowSpinner(true);
         setFrmEdit(false)
+        setTitulo("")//reseta as variaveis
+        setIdEvento(null)//reseta as variaveis
+        setShowSpinner(false);
     }
 
     //mostra o formulario de edicao
     async function showUpdateForm(idElement) {
+        setShowSpinner(true);
         setFrmEdit(true)
         try {
             const promise = await api.get(`${eventsTypeResource}/${idElement}`, { idElement })
             setTitulo(promise.data.titulo)
+            setIdEvento(idElement)//preenche o id do evento para poder atualizar
         } catch (error) {
-
+            setNotifyUser({
+                titleNote: 'Erro',
+                textNote: 'Erro na operacao. Verifique sua conexao com a internet',
+                imgIcon: 'warning',
+                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
+                showMessage: true
+            })
         }
+        setShowSpinner(false);
 
     }
 
     //apaga o tipo de evento na api
     async function handleDelete(idElement) {
+        setShowSpinner(true);
 
         if (window.confirm('Confirma a excludao?')) {
 
@@ -102,8 +177,15 @@ const TipoEventosPage = () => {
                 }
 
             } catch (error) {
-                alert('Deu ruim no submit')
+                setNotifyUser({
+                    titleNote: 'Erro',
+                    textNote: 'Erro na operacao. Verifique sua conexao com a internet',
+                    imgIcon: 'warning',
+                    imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
+                    showMessage: true
+                })
             }
+            setShowSpinner(false);
         }
     }
 
@@ -112,6 +194,8 @@ const TipoEventosPage = () => {
     return (
         <>
             {<Notification{...notifyUser} setNotifyUser={setNotifyUser} />}
+            {/*SPINNER - Feito com position*/}
+            {showSpinner ? <Spinner/> : null}
             <MainContent>
                 <section className="cadastro-evento-section">
                     <Container>

@@ -9,11 +9,13 @@ import NextEvent from '../../components/NextEvent/NextEvent';
 import Container from '../../components/Container/Container';
 import api from '../../Services/Service'
 import { nextEventResource } from '../../Services/Service';
+import Notification from '../../components/Notification/Notification';
 
 
 const HomePage = () => {
 
     const [nextEvents, setNextEvents] = useState([]);//dados mokcdados
+    const [notifyUser, setNotifyUser] = useState([])
 
     //roda somente na inicialização do componente
     useEffect( () => {
@@ -24,15 +26,22 @@ const HomePage = () => {
 
                 setNextEvents(dados);//atualiza o state
             } catch (error) {
-                alert("Deu ruim na api")
+                setNotifyUser({
+                    titleNote: 'Erro',
+                    textNote:'Erro na operacao. Verifique sua conexao com a internet',
+                    imgIcon: 'danger',
+                    imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
+                    showMessage: true
+                })
             }
         }
         getNextEvents(); //roda a função
     }, []);
 
     return (
-       <div>
+       
            <MainContent>
+            {<Notification {...notifyUser} setNotifyUser={setNotifyUser}/>}
                 <Banner/>
                 <section className='proximos-eventos'>
                     <Container>
@@ -63,7 +72,7 @@ const HomePage = () => {
                 <ContactSection/>
                     
            </MainContent>
-       </div>
+       
     );
 };
 
