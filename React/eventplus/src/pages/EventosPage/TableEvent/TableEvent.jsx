@@ -1,5 +1,6 @@
 import React from 'react';
 import'./TableEvent.css'
+import { dateFormatDbToView } from '../../../Utils/stringFunctions';
 
 import editPen from '../../../assets/images/edit-pen.svg'
 import trashDelete from '../../../assets/images/trash-delete.svg'
@@ -21,27 +22,27 @@ const TableEvent = ({dados,fnDelete = null, fnUpdate = null}) => {
              <tbody>
                 {dados.map((event) => {
                     return (
-                        <tr className="table-data__head-row" key={event.IdEvento}>
+                        <tr className="table-data__head-row" key={event.idEvento}>
                             <td className="table-data__data table-data__data--big">
-                                {event.nome}
+                                {event.nomeEvento}
                             </td>
                             <td className="table-data__data table-data__data--big">
                                 {event.descricao}
                             </td>
                             <td className="table-data__data table-data__data--big">
-                                {event.tipoEvento}
+                                {event.tiposEvento.titulo}
                             </td>
                             <td className="table-data__data table-data__data--big">
-                                {event.data}
+                                {dateFormatDbToView(event.dataEvento)}
                             </td>
 
                             <td className="table-data__data table-data__data--little">
-                                <img className="table-data__icon" src={editPen} alt="" onClick={() =>fnUpdate(event.IdEvento)}/>
+                                <img className="table-data__icon" src={editPen} alt="" onClick={() =>fnUpdate(event.idEvento)}/>
                             </td>
 
                             <td className="table-data__data table-data__data--little"
                             >
-                                <img className="table-data__icon" src={trashDelete} alt="" onClick={() =>{fnDelete(event.IdEvento)}} idtipoevento = {event.IdEvento}/>
+                                <img className="table-data__icon" src={trashDelete} alt="" onClick={() =>{fnDelete(event.idEvento)}} idevento = {event.idEvento}/>
                             </td>
                         </tr>
                     )
