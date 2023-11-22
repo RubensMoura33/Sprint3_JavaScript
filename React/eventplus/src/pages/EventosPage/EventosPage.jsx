@@ -36,7 +36,7 @@ const EventosPage = () => {
             }
 
             catch (error) {
-                alert('erro')
+                alert('erro ')
             }
         }
 
@@ -85,9 +85,9 @@ const EventosPage = () => {
                 {dataEvento: dataEvento,
                  nomeEvento: nomeEvento,
                  descricao: descricao,
-                 idTipoEvento: tiposEvento,
                  idInstituicao: IdInstituicao
                 })
+                console.log(idTipoEvento);
 
                 if (promise.status == 201) {
                     const buscaEventos = await api.get(eventsResource);
@@ -95,7 +95,7 @@ const EventosPage = () => {
                 }
 
         } catch (error) {
-            alert('erro')
+            alert(`${idTipoEvento}`)
         }
     }
 
@@ -139,7 +139,11 @@ const EventosPage = () => {
                             <Title titleText="Cadastro de Evento" />
                             <ImageIlustrator imageRender={eventoImage} />
 
-                            <form className='f-evento'>
+                            <form className='f-evento' onSubmit={frmEdit ? handleUpdate : handleSubmit}>
+                                {
+                                !frmEdit ?
+                                (
+                                <>
                                 <Input
                                     id='Nome'
                                     type={'text'}
@@ -170,6 +174,9 @@ const EventosPage = () => {
                                     required={'required'}
                                     options={tituloTipo(tiposEvento)}
                                     value={idTipoEvento}
+                                    manipulationFunction={(e) =>{
+                                        setIdTipoEvento(e.target.value)
+                                    }}
                                 />
 
                                 <Input
@@ -191,6 +198,9 @@ const EventosPage = () => {
                                     //formulário só será chamado pois seu type é submit
                                     type="submit"
                                 />
+                                </>
+                                ):
+                                <></>}
 
                             </form>
                         </div>
