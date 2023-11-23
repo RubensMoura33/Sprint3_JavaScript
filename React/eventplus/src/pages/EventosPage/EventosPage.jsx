@@ -27,6 +27,8 @@ const EventosPage = () => {
 
     const [tiposEvento, setTipoEventos] = useState([]);
     const [eventos, setEventos] = useState([]);
+    const [notifyUser, setNotifyUser] = useState([])//Componente Notification
+    const [showSpinner, setShowSpinner] = useState(false)//Spinner Loading
 
     //FUNCTIONS
     async function loadEventsType() {
@@ -37,7 +39,13 @@ const EventosPage = () => {
         }
 
         catch (error) {
-            alert('erro ')
+            setNotifyUser({
+                titleNote: 'Erro',
+                textNote: 'Erro na operacao. Verifique sua conexao com a internet',
+                imgIcon: 'danger',
+                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
+                showMessage: true
+            })
         }
     }
 
@@ -49,7 +57,13 @@ const EventosPage = () => {
         }
 
         catch (error) {
-            alert('erro')
+            setNotifyUser({
+                titleNote: 'Erro',
+                textNote: 'Erro na operacao. Verifique sua conexao com a internet',
+                imgIcon: 'danger',
+                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
+                showMessage: true
+            })
         }
     }
 
@@ -61,19 +75,26 @@ const EventosPage = () => {
 
     function theMagic(textNote) {
 
-        // setNotifyUser({
-        //     titleNote: 'Sucesso',
-        //     textNote,
-        //     imgIcon: 'Success',
-        //     imgAlt: 'Imagem de ilustracao de sucesso. Moca segurando um balao com simbolo de confirmacao ok.',
-        //     showMessage: true
-        // })
+        setNotifyUser({
+            titleNote: 'Sucesso',
+            textNote,
+            imgIcon: 'Success',
+            imgAlt: 'Imagem de ilustracao de sucesso. Moca segurando um balao com simbolo de confirmacao ok.',
+            showMessage: true
+        })
     }
 
     async function handleSubmit(e) {
         e.preventDefault();
         if (nomeEvento.trim().length < 3) {
-            alert('Nome do evento deve conter pelo menos 3 caracteres')
+            setNotifyUser({
+                titleNote: 'Aviso',
+                textNote: 'O titulo deve conter pelo menos 3 caracteres',
+                imgIcon: 'warning',
+                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
+                showMessage: true
+
+            })
             return;
         }
 
@@ -85,19 +106,33 @@ const EventosPage = () => {
                 idTipoEvento: idTipoEvento,
                 idInstituicao: IdInstituicao
             })
+            theMagic("Cadastrado com sucesso")
 
             loadEvents()
 
         } catch (error) {
-            alert('erro');
+
+            setNotifyUser({
+                titleNote: 'Erro',
+                textNote: 'Erro na operacao. Verifique sua conexao com a internet',
+                imgIcon: 'warning',
+                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
+                showMessage: true
+            })
         }
     }
 
     async function handleUpdate(e) {
         e.preventDefault();
         if (nomeEvento.trim().length < 3) {
-            alert('Nome do evento deve conter pelo menos 3 caracteres')
-            return;
+            setNotifyUser({
+                titleNote: 'Aviso',
+                textNote: 'O titulo deve conter pelo menos 3 caracteres',
+                imgIcon: 'warning',
+                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
+                showMessage: true
+
+            })
         }
         try {
             const promise = await api.put(`${eventsResource}/${idEvento}`, {
@@ -105,26 +140,67 @@ const EventosPage = () => {
                 nomeEvento: nomeEvento,
                 descricao: descricao,
                 idTipoEvento: idTipoEvento,
-            })
-        } 
-        catch (error) {
+                idInstituicao: IdInstituicao
 
+            })
+
+
+            if (promise.status == 204) {
+                setFrmEdit(false)
+                setDataEvento('')
+                setNomeEvento('')
+                setDescricao('')
+                setIdTipoEvento('')
+                theMagic("Atualizado com sucesso")
+                loadEvents()
+            }
+        }
+        catch (error) {
+            console.log({
+                idEvento,
+                dataEvento,
+                nomeEvento,
+                descricao,
+                idTipoEvento,
+                idInstituicao: IdInstituicao
+            })
+            setNotifyUser({
+                titleNote: 'Erro',
+                textNote: 'Erro na operacao. Verifique sua conexao com a internet',
+                imgIcon: 'warning',
+                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
+                showMessage: true
+            })
         }
     }
 
-    function editActionAbort() { }
+    function editActionAbort() {
+
+        setFrmEdit(false)
+        setDataEvento('')
+        setNomeEvento('')
+        setDescricao('')
+        setIdTipoEvento('')
+    }
 
     async function showUpdateForm(idElement) {
         setFrmEdit(true)
         try {
             const promise = await api.get(`${eventsResource}/${idElement}`, { idElement })
-            setDataEvento(promise.data.dataEvento)
+            setDataEvento(promise.data.dataEvento.slice(0, 10))
             setNomeEvento(promise.data.nomeEvento)
             setDescricao(promise.data.descricao)
             setIdTipoEvento(promise.data.idTipoEvento)
+            setIdEvento(idElement);
 
         } catch (error) {
-            alert('erro')
+            setNotifyUser({
+                titleNote: 'Erro',
+                textNote: 'Erro na operacao. Verifique sua conexao com a internet',
+                imgIcon: 'warning',
+                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
+                showMessage: true
+            })
         }
     }
 
@@ -133,11 +209,18 @@ const EventosPage = () => {
             try {
                 const promise = await api.delete(`${eventsResource}/${idElement}`, { idElement })
                 if (promise.status == 204) {
+                    theMagic("Excluido com sucesso")
                     const buscaEventos = await api.get(eventsResource);
                     setEventos(buscaEventos.data)
                 }
             } catch (error) {
-                alert('erro')
+                setNotifyUser({
+                    titleNote: 'Erro',
+                    textNote: 'Erro na operacao. Verifique sua conexao com a internet',
+                    imgIcon: 'warning',
+                    imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
+                    showMessage: true
+                })
             }
         }
     }
@@ -153,7 +236,7 @@ const EventosPage = () => {
 
     return (
         <>
-
+            {<Notification{...notifyUser} setNotifyUser={setNotifyUser} />}
             <MainContent>
                 <section className="cadastro-evento-section">
                     <Container>
