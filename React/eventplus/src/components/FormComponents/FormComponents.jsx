@@ -37,14 +37,16 @@ export const Label = ({htmlFor, labelText}) => {
     );
 }
 
-export const Select = ({required, id, name, options, onChange, addtionalClass = "", defaultValue}) => {
+export const Select = ({required, id, name, options, manipulationFunction, addtionalClass = "", value}) => {
     return(
         <select 
-        name={name} 
-        id={id} 
-        required={required} 
-        className={`input-component ${addtionalClass}`}>
-            
+            name={name} 
+            id={id} 
+            required={required} 
+            className={`input-component ${addtionalClass}`}
+            value={value}
+            onChange={manipulationFunction}
+        >
             <option value="">Selecione</option>
             {options.map((o) => {
                 return (
