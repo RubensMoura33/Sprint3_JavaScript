@@ -25,7 +25,7 @@ const EventosPage = () => {
     const [idEvento, setIdEvento] = useState(null);
     const [dataEvento, setDataEvento] = useState('');
 
-    const [tiposEvento, setTipoEventos] = useState([]);
+    const [tiposEvento, setTipoEventos] = useState([]); 
     const [eventos, setEventos] = useState([]);
     const [notifyUser, setNotifyUser] = useState([])//Componente Notification
     const [showSpinner, setShowSpinner] = useState(false)//Spinner Loading
@@ -33,6 +33,7 @@ const EventosPage = () => {
     //FUNCTIONS
     async function loadEventsType() {
 
+        setShowSpinner(true);
         try {
             const retorno = await api.get(eventsTypeResource);
             setTipoEventos(retorno.data)
@@ -46,11 +47,13 @@ const EventosPage = () => {
                 imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
                 showMessage: true
             })
-        }
+
+        } setShowSpinner(false);
     }
 
     async function loadEvents() {
 
+        setShowSpinner(true);
         try {
             const retorno = await api.get(eventsResource);
             setEventos(retorno.data)
@@ -64,7 +67,7 @@ const EventosPage = () => {
                 imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
                 showMessage: true
             })
-        }
+        } setShowSpinner(false);
     }
 
     useEffect(() => {
@@ -86,6 +89,7 @@ const EventosPage = () => {
 
     async function handleSubmit(e) {
         e.preventDefault();
+        setShowSpinner(true);
         if (nomeEvento.trim().length < 3) {
             setNotifyUser({
                 titleNote: 'Aviso',
@@ -106,6 +110,10 @@ const EventosPage = () => {
                 idTipoEvento: idTipoEvento,
                 idInstituicao: IdInstituicao
             })
+            setDataEvento('')
+            setNomeEvento('')
+            setDescricao('')
+            setIdTipoEvento('')
             theMagic("Cadastrado com sucesso")
 
             loadEvents()
@@ -120,10 +128,12 @@ const EventosPage = () => {
                 showMessage: true
             })
         }
+        setShowSpinner(false);
     }
 
     async function handleUpdate(e) {
         e.preventDefault();
+        setShowSpinner(true);
         if (nomeEvento.trim().length < 3) {
             setNotifyUser({
                 titleNote: 'Aviso',
@@ -172,19 +182,36 @@ const EventosPage = () => {
                 showMessage: true
             })
         }
+        setShowSpinner(false);
     }
 
     function editActionAbort() {
+        setShowSpinner(true);
+        try {
+            setFrmEdit(false)
+            setDataEvento('')
+            setNomeEvento('')
+            setDescricao('')
+            setIdTipoEvento('')
+        } catch (error) {
 
-        setFrmEdit(false)
-        setDataEvento('')
-        setNomeEvento('')
-        setDescricao('')
-        setIdTipoEvento('')
+            setNotifyUser({
+                titleNote: 'Erro',
+                textNote: 'Erro na operacao. Verifique sua conexao com a internet',
+                imgIcon: 'warning',
+                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
+                showMessage: true
+            })
+        }
+
+
+        setShowSpinner(false);
     }
 
     async function showUpdateForm(idElement) {
+        setShowSpinner(true);
         setFrmEdit(true)
+
         try {
             const promise = await api.get(`${eventsResource}/${idElement}`, { idElement })
             setDataEvento(promise.data.dataEvento.slice(0, 10))
@@ -202,9 +229,11 @@ const EventosPage = () => {
                 showMessage: true
             })
         }
+        setShowSpinner(false);
     }
 
     async function handleDelete(idElement) {
+        setShowSpinner(true);
         if (window.confirm('Confirma a exclusão')) {
             try {
                 const promise = await api.delete(`${eventsResource}/${idElement}`, { idElement })
@@ -222,6 +251,7 @@ const EventosPage = () => {
                     showMessage: true
                 })
             }
+            setShowSpinner(false);
         }
     }
 
@@ -235,7 +265,7 @@ const EventosPage = () => {
     }
 
     return (
-        <>
+        <>  {showSpinner ? <Spinner /> : null}
             {<Notification{...notifyUser} setNotifyUser={setNotifyUser} />}
             <MainContent>
                 <section className="cadastro-evento-section">
