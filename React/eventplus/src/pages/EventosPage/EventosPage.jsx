@@ -88,8 +88,8 @@ const EventosPage = () => {
     }
 
     async function handleSubmit(e) {
-        e.preventDefault();
         setShowSpinner(true);
+        e.preventDefault();
         if (nomeEvento.trim().length < 3) {
             setNotifyUser({
                 titleNote: 'Aviso',
@@ -99,6 +99,7 @@ const EventosPage = () => {
                 showMessage: true
 
             })
+            setShowSpinner(false);
             return;
         }
 

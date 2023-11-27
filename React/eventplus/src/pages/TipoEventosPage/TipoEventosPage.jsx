@@ -66,8 +66,9 @@ const TipoEventosPage = () => {
                 imgIcon: 'warning',
                 imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
                 showMessage: true
-
+                
             })
+            setShowSpinner(false);
             return;
         }
 
