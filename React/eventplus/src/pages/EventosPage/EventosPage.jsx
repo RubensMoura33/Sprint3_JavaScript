@@ -121,6 +121,13 @@ const EventosPage = () => {
 
         } catch (error) {
 
+            console.log({
+                dataEvento: dataEvento,
+                nomeEvento: nomeEvento,
+                descricao: descricao,
+                idTipoEvento: idTipoEvento,
+                idInstituicao: IdInstituicao
+            });
             setNotifyUser({
                 titleNote: 'Erro',
                 textNote: 'Erro na operacao. Verifique sua conexao com a internet',

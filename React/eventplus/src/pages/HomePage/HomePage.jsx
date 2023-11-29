@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import './HomePage.css'
 import Banner from '../../components/Banner/Banner'
 import MainContent from '../../components/Main/MainContent';
@@ -10,9 +10,12 @@ import Container from '../../components/Container/Container';
 import api from '../../Services/Service'
 import { nextEventResource } from '../../Services/Service';
 import Notification from '../../components/Notification/Notification';
+import { UserContext } from '../../context/AuthContext';
 
 
 const HomePage = () => {
+
+    const {userData} = useContext(UserContext);
 
     const [nextEvents, setNextEvents] = useState([]);//dados mokcdados
     const [notifyUser, setNotifyUser] = useState([])
