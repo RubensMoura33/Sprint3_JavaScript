@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ImageIllustrator from "../../components/ImageIllustrator/ImageIllustrator";
 import logo from "../../assets/images/logo-pink.svg";
 import loginImage from "../../assets/images/login.svg"
@@ -7,6 +7,7 @@ import api from "../../Services/Service";
 import { UserContext, userDecodeToken } from "../../context/AuthContext";
 
 import "./LoginPage.css";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
 
@@ -14,6 +15,11 @@ const LoginPage = () => {
 
     //Dados Globais do usuario
     const { userData, setUserData } = useContext(UserContext)
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (userData.name) navigate("/")
+    }, [userData])
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -29,6 +35,7 @@ const LoginPage = () => {
                 const userFullToken = userDecodeToken(promise.data.token);
                 setUserData(userFullToken);
                 localStorage.setItem("token", JSON.stringify(userFullToken));
+                navigate("/")
             } 
             catch (error) {
                 alert("erro")
