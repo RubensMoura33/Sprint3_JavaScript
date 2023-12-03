@@ -3,13 +3,8 @@ import { createContext } from "react";
 
 export const UserContext = createContext(null);
 
+//pegando o token, decodificando e extraindo as informações de login no formato json
 export const userDecodeToken = (theToken) => {
-    const decoded = jwtDecode(theToken);//aqui retorna o playload
-
-    return {
-        role: decoded.role,
-        name: decoded.name,
-        userId: decoded.jti,
-        token: theToken
-    }
+    const decoded = jwtDecode(theToken);//objeto de payload
+    return { role: decoded.role, nome: decoded.name, token: theToken}
 }

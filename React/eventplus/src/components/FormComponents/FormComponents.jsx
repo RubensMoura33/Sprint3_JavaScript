@@ -19,7 +19,7 @@ export const Input = ( {type, id, value, required,name, placeholdder, manipulati
 };
 
 export const Label = ({htmlFor, labelText}) => {
-    return <label htmlFor="">{labelText} </label>
+    return <label htmlFor={htmlFor}>{labelText} </label>
 }
 
 //componente criado na forma tradicional props ao invés do destructuring
@@ -40,13 +40,13 @@ export const Label = ({htmlFor, labelText}) => {
 export const Select = ({required, id, name, options, manipulationFunction, addtionalClass = "", value}) => {
     return(
         <select 
-            name={name} 
-            id={id} 
-            required={required} 
-            className={`input-component ${addtionalClass}`}
-            value={value}
-            onChange={manipulationFunction}
-        >
+        name={name} 
+        id={id} 
+        required={required} 
+        value={value}
+        onChange={manipulationFunction}
+        className={`input-component ${addtionalClass}`}>
+            
             <option value="">Selecione</option>
             {options.map((o) => {
                 return (

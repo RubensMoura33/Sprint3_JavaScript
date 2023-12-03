@@ -1,439 +1,432 @@
-import React, { useEffect, useState } from 'react';
-import './EventosPage.css'
-import Title from '../../components/Title/Title'
-import MainContent from '../../components/Main/MainContent';
-import Container from '../../components/Container/Container';
-import ImageIlustrator from '../../components/ImageIllustrator/ImageIllustrator'
-import eventoImage from '../../assets/images/evento.svg'
-import { Input, Button, Select } from '../../components/FormComponents/FormComponents'
-import api, { eventsResource, eventsTypeResource } from '../../Services/Service';
-import TableEvent from './TableEvent/TableEvent';
-import Notification from '../../components/Notification/Notification'
-import Spinner from "../../components/Spinner/Spinner"
-
-
+import React, { useState, useEffect } from "react";
+import "./EventosPage.css";
+import Title from "../../components/Title/Title";
+import Container from "../../components/Container/Container";
+import MainContent from "../../components/Main/MainContent";
+import ImageIllustrator from "../../components/ImageIllustrator/ImageIllustrator";
+import eventoImage from "../../assets/images/evento.svg";
+import {
+  Input,
+  Button,
+  Select,
+} from "../../components/FormComponents/FormComponents";
+import TableEvent from "./TableEvent/TableEvent";
+import Notification from "../../components/Notification/Notification";
+import api, {
+  eventsTypeResource,
+  eventsResource,
+} from "../../Services/Service";
+import Spinner from "../../components/Spinner/Spinner";
 
 const EventosPage = () => {
-    //STATES
-    const [frmEdit, setFrmEdit] = useState(false);//esta em modo de edicao
+  //STATES
+  const [frmEdit, setFrmEdit] = useState(false);
 
-    const IdInstituicao = "95A14FC6-240A-470E-9C8D-F6863772D99B"
+  const [evento, setEvento] = useState([]);
 
-    const [nomeEvento, setNomeEvento] = useState('');
-    const [descricao, setDescricao] = useState('');
-    const [idTipoEvento, setIdTipoEvento] = useState('');
-    const [idEvento, setIdEvento] = useState(null);
-    const [dataEvento, setDataEvento] = useState('');
+  const [nomeEvento, setNomeEvento] = useState("");
 
-    const [tiposEvento, setTipoEventos] = useState([]); 
-    const [eventos, setEventos] = useState([]);
-    const [notifyUser, setNotifyUser] = useState([])//Componente Notification
-    const [showSpinner, setShowSpinner] = useState(false)//Spinner Loading
+  const [descricao, setDescricao] = useState("");
 
-    //FUNCTIONS
-    async function loadEventsType() {
+  const [tipoEvento, setTipoEvento] = useState([]);
 
-        setShowSpinner(true);
-        try {
-            const retorno = await api.get(eventsTypeResource);
-            setTipoEventos(retorno.data)
-        }
+  const [dataEvento, setDataEvento] = useState("");
 
-        catch (error) {
-            setNotifyUser({
-                titleNote: 'Erro',
-                textNote: 'Erro na operacao. Verifique sua conexao com a internet',
-                imgIcon: 'danger',
-                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
-                showMessage: true
-            })
+  //ID
 
-        } setShowSpinner(false);
+  const [idEvento, setIdEvento] = useState(null);
+
+  const [idTipoEvento, setIdTipoEvento] = useState(null);
+
+  const idInstituicao = "c8fd6bcf-2e69-4726-8257-52b78dd38580";
+
+  //NOtify
+
+  const [notifyUser, setNotifyUser] = useState();
+
+  const [showSpinner, setShowSpinner] = useState(false);
+
+  //FUNCTIONS
+  function editActionAbort() {
+    setFrmEdit(false);
+    setNomeEvento("");
+    setDescricao("");
+    setTipoEvento([]);
+    setDataEvento("");
+  }
+
+  function theMagic(titleNote, textNote, imgIcon, imgAlt) {
+    setNotifyUser({
+      titleNote,
+      textNote,
+      imgIcon,
+      imgAlt,
+      showMessage: true,
+    });
+  }
+
+  //SUBMIT
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setShowSpinner(true);
+    if (nomeEvento.trim().length < 3) {
+      theMagic();
+      return;
     }
 
+    try {
+      const promise = await api.post(eventsResource, {
+        nomeEvento: nomeEvento,
+        descricao: descricao,
+        dataEvento: dataEvento,
+        idTipoEvento: idTipoEvento,
+        idInstituicao: idInstituicao,
+      });
+      setNomeEvento("");
+      setDescricao("");
+      setDataEvento("");
+      setTipoEvento([]);
+      if (promise.status == 201) {
+        theMagic(
+          "Sucess",
+          "Cadastrado com sucesso",
+          "success",
+          "Imagem de sucesso. Moça segurando balão"
+        );
+        const buscaEventos = await api.get(eventsResource);
+
+        setEvento(buscaEventos.data);
+      }
+    } catch (error) {
+      theMagic(
+        "Erro",
+        "Erro na operação. Verifique a conexão com a internet",
+        "danger",
+        "Imagem de erro. Rapaz segurando um balão com símbolo x"
+      );
+    }
+    setShowSpinner(false);
+  }
+
+  //UPDATE
+  async function handleUpdate(e) {
+    e.preventDefault();
+    setShowSpinner(true);
+    try {
+      const retorno = await api.put(`${eventsResource}/${idEvento}`, {
+        nomeEvento: nomeEvento,
+        descricao: descricao,
+        dataEvento: dataEvento,
+        idTipoEvento: idTipoEvento,
+        idInstituicao: idInstituicao,
+      });
+
+      if (nomeEvento.trim().length < 3) {
+        theMagic(
+          "Erro",
+          "O cadastro deve ter no mínimo 3 caracteres",
+          "warning",
+          "Imagem de aviso. Boneco batendo na exclamação"
+        );
+        return;
+      }
+
+      if (retorno.status == 204) {
+        setNomeEvento("");
+        setDescricao("");
+        setDataEvento("");
+        setTipoEvento([]);
+        const atualizaEvento = await api.get(`${eventsResource}`);
+
+        setEvento(atualizaEvento.data);
+
+        theMagic(
+          "Sucess",
+          "Atualiazado com sucesso",
+          "success",
+          "Imagem de sucesso. Moça segurando balão"
+        );
+      }
+    } catch (error) {
+      theMagic(
+        "Erro",
+        "Erro na operação. Verifique a conexão com a internet",
+        "danger",
+        "Imagem de erro. Rapaz segurando um balão com símbolo x"
+      );
+    }
+    setShowSpinner(false);
+  }
+
+  //SHOWUPDATEFORM
+  async function showUpdateForm(idElement) {
+    setFrmEdit(true);
+    setIdEvento(idElement);
+    setShowSpinner(true);
+    try {
+      const promise = await api.get(`${eventsResource}/${idElement}`, {
+        idElement,
+      });
+
+      setNomeEvento(promise.data.nomeEvento);
+      setDescricao(promise.data.descricao);
+      setDataEvento(promise.data.dataEvento.slice(0, 10));
+      setIdTipoEvento(promise.data.idTipoEvento);
+    } catch (error) {
+      theMagic(
+        "Erro",
+        "Erro na operação. Verifique a conexão com a internet",
+        "danger",
+        "Imagem de erro. Rapaz segurando um balão com símbolo x"
+      );
+    }
+    setShowSpinner(false);
+  }
+
+  //DELETE
+  async function handleDelete(idElement) {
+    setShowSpinner(true);
+    if (window.confirm("Confirmar a exclusão?")) {
+      try {
+        const rota = await api.delete(`${eventsResource}/${idElement}`, {
+          idElement,
+        });
+
+        if (rota.status == 204) {
+          theMagic(
+            "Sucess",
+            "Cadastrado com sucesso",
+            "success",
+            "Imagem de sucesso. Moça segurando balão"
+          );
+
+          const buscaEventos = await api.get(eventsResource);
+
+          setEvento(buscaEventos.data);
+        }
+      } catch (error) {
+        theMagic(
+          "Erro",
+          "Erro na operação. Verifique a conexão com a internet",
+          "danger",
+          "Imagem de erro. Rapaz segurando um balão com símbolo x"
+        );
+      }
+    }
+    setShowSpinner(false);
+  }
+
+  //GET EVENTOS
+  useEffect(() => {
     async function loadEvents() {
-
-        setShowSpinner(true);
-        try {
-            const retorno = await api.get(eventsResource);
-            setEventos(retorno.data)
-        }
-
-        catch (error) {
-            setNotifyUser({
-                titleNote: 'Erro',
-                textNote: 'Erro na operacao. Verifique sua conexao com a internet',
-                imgIcon: 'danger',
-                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
-                showMessage: true
-            })
-        } setShowSpinner(false);
+      setShowSpinner(true);
+      try {
+        const retorno = await api.get(eventsResource);
+        setEvento(retorno.data);
+        console.log(retorno.data);
+      } catch (error) {
+        theMagic(
+          "Erro",
+          "Erro na operação. Verifique a conexão com a internet",
+          "danger",
+          "Imagem de erro. Rapaz segurando um balão com símbolo x"
+        );
+      }
+      setShowSpinner(false);
     }
+    loadEvents();
+  }, []);
 
-    useEffect(() => {
-        loadEventsType()
-        loadEvents()
-    }, [])
-
-
-    function theMagic(textNote) {
-
+  //GET EM TIPOS DE EVENTO
+  useEffect(() => {
+    async function loadEventsType() {
+      setShowSpinner(true);
+      try {
+        const retorno = await api.get(eventsTypeResource);
+        setTipoEvento(retorno.data);
+      } catch (error) {
         setNotifyUser({
-            titleNote: 'Sucesso',
-            textNote,
-            imgIcon: 'Success',
-            imgAlt: 'Imagem de ilustracao de sucesso. Moca segurando um balao com simbolo de confirmacao ok.',
-            showMessage: true
-        })
+          titleNote: "Erro",
+          textNote: "Erro na operação. Verifique a conexão com a internet.",
+          imgIcon: "danger",
+          imgAlt:
+            "Imagem de ilustração de erro. Rapaz segurando um balao com simbolo x.",
+          showMessage: true,
+        });
+      }
+      setShowSpinner(false);
     }
+    loadEventsType();
+  }, []);
 
-    async function handleSubmit(e) {
-        setShowSpinner(true);
-        e.preventDefault();
-        if (nomeEvento.trim().length < 3) {
-            setNotifyUser({
-                titleNote: 'Aviso',
-                textNote: 'O titulo deve conter pelo menos 3 caracteres',
-                imgIcon: 'warning',
-                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
-                showMessage: true
+  //DEPARA
+  function dePara(retornoApi) {
+    let arrayOptions = [];
+    retornoApi.forEach((e) => {
+      arrayOptions.push({ value: e.idTipoEvento, text: e.titulo });
+    });
+    return arrayOptions;
+  }
 
-            })
-            setShowSpinner(false);
-            return;
-        }
+  return (
+    <>
+      {<Notification {...notifyUser} setNotifyUser={setNotifyUser} />}
+      {/* SPINNER - Feito com position */}
+      <MainContent>
+        <section className="cadastro-evento-section">
+          <Container>
+            <div className="cadastro-evento__box">
+              <Title titleText={"Cadastro de Evento"} />
+              <ImageIllustrator imageRender={eventoImage} />
+              <form
+                className="f-evento"
+                onSubmit={frmEdit ? handleUpdate : handleSubmit}
+              >
+                {!frmEdit ? (
+                  //CADASTRAR
+                  <>
+                    <Input
+                      id="Nome"
+                      placeholdder={"Nome"}
+                      name={"nome"}
+                      type={"text"}
+                      required={"required"}
+                      value={nomeEvento}
+                      manipulationFunction={(e) => {
+                        setNomeEvento(e.target.value);
+                      }}
+                    />
 
-        try {
-            await api.post(eventsResource, {
-                dataEvento: dataEvento,
-                nomeEvento: nomeEvento,
-                descricao: descricao,
-                idTipoEvento: idTipoEvento,
-                idInstituicao: IdInstituicao
-            })
-            setDataEvento('')
-            setNomeEvento('')
-            setDescricao('')
-            setIdTipoEvento('')
-            theMagic("Cadastrado com sucesso")
+                    <Input
+                      id="Descricao"
+                      placeholdder={"Descrição"}
+                      name={"descricao"}
+                      type={"text"}
+                      required={"required"}
+                      value={descricao}
+                      manipulationFunction={(e) => {
+                        setDescricao(e.target.value);
+                      }}
+                    />
 
-            loadEvents()
+                    <Select
+                      id="TipoEvento"
+                      name={"tipoEvento"}
+                      required={"required"}
+                      options={dePara(tipoEvento)}
+                      value={idTipoEvento}
+                      manipulationFunction={(id) => {
+                        setIdTipoEvento(id.target.value);
+                      }}
+                    />
 
-        } catch (error) {
+                    <Input
+                      id="Data"
+                      placeholdder={"dd/mm/aaaa"}
+                      name={"data"}
+                      type={"date"}
+                      required={"required"}
+                      value={dataEvento}
+                      manipulationFunction={(e) => {
+                        setDataEvento(e.target.value);
+                      }}
+                    />
 
-            console.log({
-                dataEvento: dataEvento,
-                nomeEvento: nomeEvento,
-                descricao: descricao,
-                idTipoEvento: idTipoEvento,
-                idInstituicao: IdInstituicao
-            });
-            setNotifyUser({
-                titleNote: 'Erro',
-                textNote: 'Erro na operacao. Verifique sua conexao com a internet',
-                imgIcon: 'warning',
-                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
-                showMessage: true
-            })
-        }
-        setShowSpinner(false);
-    }
+                    <Button
+                      textButton="Cadastrar"
+                      id="cadastrar"
+                      name="cadastrar"
+                      type="submit"
+                    />
+                  </>
+                ) : (
+                  //EDITAR
+                  <>
+                    <Input
+                      id="Nome"
+                      placeholdder={"Nome"}
+                      name={"nome"}
+                      type={"text"}
+                      required={"required"}
+                      value={nomeEvento}
+                      manipulationFunction={(e) => {
+                        setNomeEvento(e.target.value);
+                      }}
+                    />
 
-    async function handleUpdate(e) {
-        e.preventDefault();
-        setShowSpinner(true);
-        if (nomeEvento.trim().length < 3) {
-            setNotifyUser({
-                titleNote: 'Aviso',
-                textNote: 'O titulo deve conter pelo menos 3 caracteres',
-                imgIcon: 'warning',
-                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
-                showMessage: true
+                    <Input
+                      id="Descricao"
+                      placeholdder={"Descrição"}
+                      name={"descricao"}
+                      type={"text"}
+                      required={"required"}
+                      value={descricao}
+                      manipulationFunction={(e) => {
+                        setDescricao(e.target.value);
+                      }}
+                    />
 
-            })
-        }
-        try {
-            const promise = await api.put(`${eventsResource}/${idEvento}`, {
-                dataEvento: dataEvento,
-                nomeEvento: nomeEvento,
-                descricao: descricao,
-                idTipoEvento: idTipoEvento,
-                idInstituicao: IdInstituicao
+                    <Select
+                      id="TipoEvento"
+                      name={"tipoEvento"}
+                      required={"required"}
+                      options={dePara(tipoEvento)}
+                      value={idTipoEvento}
+                      manipulationFunction={(e) => {
+                        setIdTipoEvento(e.target.value);
+                      }}
+                    />
 
-            })
+                    <Input
+                      id="Data"
+                      placeholdder={"dd/mm/aaaa"}
+                      name={"data"}
+                      type={"date"}
+                      required={"required"}
+                      value={dataEvento}
+                      manipulationFunction={(e) => {
+                        setDataEvento(e.target.value);
+                      }}
+                    />
 
+                    <div className="buttons-editbox">
+                      <Button
+                        textButton="Atualizar"
+                        id="atualizar"
+                        name="atualizar"
+                        type="submit"
+                        additionalClass="button-component--middle"
+                      />
 
-            if (promise.status == 204) {
-                setFrmEdit(false)
-                setDataEvento('')
-                setNomeEvento('')
-                setDescricao('')
-                setIdTipoEvento('')
-                theMagic("Atualizado com sucesso")
-                loadEvents()
-            }
-        }
-        catch (error) {
-            console.log({
-                idEvento,
-                dataEvento,
-                nomeEvento,
-                descricao,
-                idTipoEvento,
-                idInstituicao: IdInstituicao
-            })
-            setNotifyUser({
-                titleNote: 'Erro',
-                textNote: 'Erro na operacao. Verifique sua conexao com a internet',
-                imgIcon: 'warning',
-                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
-                showMessage: true
-            })
-        }
-        setShowSpinner(false);
-    }
+                      <Button
+                        textButton="Cancelar"
+                        id="cancelar"
+                        name="cancelar"
+                        type="submit"
+                        manipulationFunction={editActionAbort}
+                        additionalClass="button-component--middle"
+                      />
+                    </div>
+                  </>
+                )}
+              </form>
+            </div>
+          </Container>
+        </section>
 
-    function editActionAbort() {
-        setShowSpinner(true);
-        try {
-            setFrmEdit(false)
-            setDataEvento('')
-            setNomeEvento('')
-            setDescricao('')
-            setIdTipoEvento('')
-        } catch (error) {
-
-            setNotifyUser({
-                titleNote: 'Erro',
-                textNote: 'Erro na operacao. Verifique sua conexao com a internet',
-                imgIcon: 'warning',
-                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
-                showMessage: true
-            })
-        }
-
-
-        setShowSpinner(false);
-    }
-
-    async function showUpdateForm(idElement) {
-        setShowSpinner(true);
-        setFrmEdit(true)
-
-        try {
-            const promise = await api.get(`${eventsResource}/${idElement}`, { idElement })
-            setDataEvento(promise.data.dataEvento.slice(0, 10))
-            setNomeEvento(promise.data.nomeEvento)
-            setDescricao(promise.data.descricao)
-            setIdTipoEvento(promise.data.idTipoEvento)
-            setIdEvento(idElement);
-
-        } catch (error) {
-            setNotifyUser({
-                titleNote: 'Erro',
-                textNote: 'Erro na operacao. Verifique sua conexao com a internet',
-                imgIcon: 'warning',
-                imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
-                showMessage: true
-            })
-        }
-        setShowSpinner(false);
-    }
-
-    async function handleDelete(idElement) {
-        setShowSpinner(true);
-        if (window.confirm('Confirma a exclusão')) {
-            try {
-                const promise = await api.delete(`${eventsResource}/${idElement}`, { idElement })
-                if (promise.status == 204) {
-                    theMagic("Excluido com sucesso")
-                    const buscaEventos = await api.get(eventsResource);
-                    setEventos(buscaEventos.data)
-                }
-            } catch (error) {
-                setNotifyUser({
-                    titleNote: 'Erro',
-                    textNote: 'Erro na operacao. Verifique sua conexao com a internet',
-                    imgIcon: 'warning',
-                    imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
-                    showMessage: true
-                })
-            }
-            setShowSpinner(false);
-        }
-    }
-
-    function tituloTipo(tipoEventos) {
-        let arrayOptions = []
-
-        tipoEventos.forEach(element => {
-            arrayOptions.push({ value: element.idTipoEvento, text: element.titulo })
-        })
-        return arrayOptions
-    }
-
-    return (
-        <>  {showSpinner ? <Spinner /> : null}
-            {<Notification{...notifyUser} setNotifyUser={setNotifyUser} />}
-            <MainContent>
-                <section className="cadastro-evento-section">
-                    <Container>
-                        <div className="cadastro-evento__box">
-                            <Title titleText="Cadastro de Evento" />
-                            <ImageIlustrator imageRender={eventoImage} />
-
-                            <form className='f-evento' onSubmit={frmEdit ? handleUpdate : handleSubmit}>
-                                {
-                                    !frmEdit ?
-                                        (
-                                            <>
-                                                <Input
-                                                    id='Nome'
-                                                    type={'text'}
-                                                    placeholdder={'Nome'}
-                                                    name={'nome'}
-                                                    required={'required'}
-                                                    value={nomeEvento}
-                                                    manipulationFunction={(e) => {
-                                                        setNomeEvento(e.target.value)
-                                                    }}
-                                                />
-
-                                                <Input
-                                                    id='Descricao'
-                                                    type={'text'}
-                                                    placeholdder={'Descrição'}
-                                                    name={'descricao'}
-                                                    required={'required'}
-                                                    value={descricao}
-                                                    manipulationFunction={(e) => {
-                                                        setDescricao(e.target.value)
-                                                    }}
-                                                />
-
-                                                <Select
-                                                    id='TiposEvento'
-                                                    name={'tiposEvento'}
-                                                    required={'required'}
-                                                    options={tituloTipo(tiposEvento)}
-                                                    value={idTipoEvento}
-                                                    manipulationFunction={(e) => {
-                                                        setIdTipoEvento(e.target.value)
-                                                    }}
-                                                />
-
-                                                <Input
-                                                    id='dataEvento'
-                                                    type={'date'}
-                                                    placeholdder={'dd/mm/aaaa'}
-                                                    name={'Data'}
-                                                    required={'required'}
-                                                    value={dataEvento}
-                                                    manipulationFunction={(e) => {
-                                                        setDataEvento(e.target.value)
-                                                    }}
-                                                />
-
-                                                <Button
-                                                    textButton="Cadastrar"
-                                                    id="cadastrar"
-                                                    name="cadastrar"
-                                                    //formulário só será chamado pois seu type é submit
-                                                    type="submit"
-                                                />
-                                            </>
-                                        ) :
-                                        <>
-                                            <Input
-                                                id='Nome'
-                                                type={'text'}
-                                                placeholdder={'Nome'}
-                                                name={'nome'}
-                                                required={'required'}
-                                                value={nomeEvento}
-                                                manipulationFunction={(e) => {
-                                                    setNomeEvento(e.target.value)
-                                                }}
-                                            />
-
-                                            <Input
-                                                id='Descricao'
-                                                type={'text'}
-                                                placeholdder={'Descrição'}
-                                                name={'descricao'}
-                                                required={'required'}
-                                                value={descricao}
-                                                manipulationFunction={(e) => {
-                                                    setDescricao(e.target.value)
-                                                }}
-                                            />
-
-                                            <Select
-                                                id='TiposEvento'
-                                                name={'tiposEvento'}
-                                                required={'required'}
-                                                options={tituloTipo(tiposEvento)}
-                                                value={idTipoEvento}
-                                                manipulationFunction={(e) => {
-                                                    setIdTipoEvento(e.target.value)
-                                                }}
-                                            />
-
-                                            <Input
-                                                id='dataEvento'
-                                                type={'date'}
-                                                placeholdder={'dd/mm/aaaa'}
-                                                name={'Data'}
-                                                required={'required'}
-                                                value={dataEvento}
-                                                manipulationFunction={(e) => {
-                                                    setDataEvento(e.target.value)
-                                                }}
-                                            />
-
-                                            <div className="buttons-editbox">
-                                                <Button
-                                                    textButton="Atualizar"
-                                                    id="atualizar"
-                                                    name="atualizar"
-                                                    //formulário só será chamado pois seu type é submit
-                                                    type="submit"
-                                                    addtionalClass="button-component--middle"
-                                                />
-
-                                                <Button
-                                                    textButton="Cancelar"
-                                                    id="cancelar"
-                                                    name="cancelar"
-                                                    //formulário só será chamado pois seu type é submit
-                                                    type="submit"
-                                                    manipulationFunction={editActionAbort}
-                                                    addtionalClass="button-component--middle"
-                                                />
-                                            </div>
-
-                                        </>
-                                }
-
-                            </form>
-                        </div>
-
-                    </Container>
-                </section>
-
-                <section className='lista-eventos-section'>
-                    <Container>
-                        <Title titleText={"Lista Tipo de Eventos"} color="white"></Title>
-                        <TableEvent
-                            dados={eventos}
-                            fnUpdate={showUpdateForm}
-                            fnDelete={handleDelete}
-                        />
-                    </Container>
-                </section>
-            </MainContent>
-        </>
-    );
+        <section className="lista-eventos-section">
+          <Container>
+            <Title titleText={"Lista de eventos"} color="white" />
+            <TableEvent
+              dados={evento}
+              fnUpdate={showUpdateForm}
+              fnDelete={handleDelete}
+            />
+          </Container>
+        </section>
+      </MainContent>
+    </>
+  );
 };
 
 export default EventosPage;

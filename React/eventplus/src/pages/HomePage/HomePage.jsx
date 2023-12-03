@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './HomePage.css'
 import Banner from '../../components/Banner/Banner'
 import MainContent from '../../components/Main/MainContent';
@@ -10,15 +10,13 @@ import Container from '../../components/Container/Container';
 import api from '../../Services/Service'
 import { nextEventResource } from '../../Services/Service';
 import Notification from '../../components/Notification/Notification';
-import { UserContext } from '../../context/AuthContext';
+
 
 
 const HomePage = () => {
-
-    const {userData} = useContext(UserContext);
+    const [notifyUser, setNotifyUser] = useState();
 
     const [nextEvents, setNextEvents] = useState([]);//dados mokcdados
-    const [notifyUser, setNotifyUser] = useState([])
 
     //roda somente na inicialização do componente
     useEffect( () => {
@@ -30,21 +28,22 @@ const HomePage = () => {
                 setNextEvents(dados);//atualiza o state
             } catch (error) {
                 setNotifyUser({
-                    titleNote: 'Erro',
-                    textNote:'Erro na operacao. Verifique sua conexao com a internet',
-                    imgIcon: 'danger',
-                    imgAlt: 'Imagem de ilustracao de erro. Rapaz segurando letra x.',
-                    showMessage: true
-                })
+                    titleNote: "Erro",
+                    textNote: "Não foi possível carregar os próximos eventos. Verifique a sua conexão com a internet.",
+                    imgIcon: "danger",
+                    imgAlt:
+                      "Imagem de ilustração de erro. Rapaz segurando um balão com símbolo X.",
+                    showMessage: true,
+                  });
             }
         }
         getNextEvents(); //roda a função
     }, []);
 
     return (
-       
+       <div>
+        <Notification {...notifyUser} setNotifyUser={setNotifyUser}/>
            <MainContent>
-            {<Notification {...notifyUser} setNotifyUser={setNotifyUser}/>}
                 <Banner/>
                 <section className='proximos-eventos'>
                     <Container>
@@ -72,10 +71,9 @@ const HomePage = () => {
                     </Container>
                 </section>
                 <VisionSection/>
-                <ContactSection/>
-                    
+                <ContactSection/>    
            </MainContent>
-       
+       </div>
     );
 };
 
