@@ -34,6 +34,7 @@ namespace webapi.event_.Repositories
             }
         }
 
+
         public PresencasEvento BuscarPorId(Guid id)
         {
             try
@@ -116,20 +117,24 @@ namespace webapi.event_.Repositories
                 {
                     IdPresencaEvento = p.IdPresencaEvento,
                     Situacao = p.Situacao,
+                    IdUsuario = p.IdUsuario,
 
                     Evento = new Evento
                     {
+                        IdEvento = p.IdEvento,
                         DataEvento = p.Evento!.DataEvento,
                         NomeEvento = p.Evento.NomeEvento,
                         Descricao = p.Evento.Descricao,
 
                         Instituicao = new Instituicao
                         {
+                            IdInstituicao = p.Evento.IdInstituicao,
                             NomeFantasia = p.Evento.Instituicao!.NomeFantasia
                         }
                     }
 
                 }).Where(p => p.IdUsuario == id).ToList();
         }
+
     }
 }

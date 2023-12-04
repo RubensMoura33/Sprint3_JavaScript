@@ -44,8 +44,8 @@ const Modal = ({
 
         <Button
           buttonText="Comentar"
-          className="comentary__button"
-          onClick={fnNewCommentary}
+          additio0nalClass="comentary__button"
+          manipulationFunction={fnNewCommentary}
         />
       </article>
     </div>

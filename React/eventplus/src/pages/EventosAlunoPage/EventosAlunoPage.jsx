@@ -7,7 +7,7 @@ import Container from "../../components/Container/Container";
 import { Select } from "../../components/FormComponents/FormComponents";
 import Spinner from "../../components/Spinner/Spinner";
 import Modal from "../../components/Modal/Modal";
-import api from "../../Services/Service";
+import api, { eventsResource } from "../../Services/Service";
 
 import "./EventosAlunoPage.css";
 import { UserContext } from "../../context/AuthContext";
@@ -16,9 +16,9 @@ const EventosAlunoPage = () => {
   // state do menu mobile
   const [exibeNavbar, setExibeNavbar] = useState(false);
   const [eventos, setEventos] = useState([
-    {idEvento: "12345", nomeEvento:"Rubens Brabo", dataEvento:"20/11/2024"},
-    {idEvento: "12345", nomeEvento:"Russo Brabo", dataEvento:"20/11/2024"},
-    {idEvento: "12345", nomeEvento:"Gabriel Victor Viado Master", dataEvento:"20/11/2024"}
+    { idEvento: "12345", nomeEvento: "Rubens Brabo", dataEvento: "20/11/2024" },
+    { idEvento: "12345", nomeEvento: "Russo Brabo", dataEvento: "20/11/2024" },
+    { idEvento: "12345", nomeEvento: "Gabriel Victor Brabo", dataEvento: "20/11/2024" }
   ]);
   // select mocado
   const [quaisEventos, setQuaisEventos] = useState([
@@ -33,15 +33,32 @@ const EventosAlunoPage = () => {
   // recupera os dados globais do usuário
   const { userData, setUserData } = useContext(UserContext);
 
-  // useEffect(() => {
+  useEffect(() => {
     
 
-  //   loadEventsType();
-  // }, []);
+
+
+  }, [tipoEvento]);
+
+  async function loadEventsType() {
+    setShowSpinner(true)
+
+    if (tipoEvento == 1) {
+
+      const retorno = await api.get(eventsResource)
+      setEventos(retorno.data)
+    }
+
+    else{
+      const retornoEventos = await api.get(`${myEventsResource}`)
+    }
+    
+    setShowSpinner(false)
+  }
+
 
   // toggle meus eventos ou todos os eventos
   function myEvents(tpEvent) {
-    setTipoEvento(tpEvent);
   }
 
   async function loadMyComentary(idComentary) {
@@ -65,16 +82,16 @@ const EventosAlunoPage = () => {
 
       <MainContent>
         <Container>
-          <Title titleText={"Eventos"} className="custom-title"/>
+          <Title titleText={"Eventos"} className="custom-title" />
 
           <Select
             id="id-tipo-evento"
             name="tipo-evento"
             required={true}
             options={quaisEventos} // aqui o array dos tipos
-            onChange={(e) => myEvents(e.target.value)} // aqui só a variável state
+            manipulationFunction={(e) => myEvents(e.target.value)} // aqui só a variável state
             defaultValue={tipoEvento}
-            className="select-tp-evento"
+            addtionalClass="select-tp-evento"
           />
           <Table
             dados={eventos}
