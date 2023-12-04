@@ -7,7 +7,7 @@ import ImageIlustrator from "../../components/ImageIllustrator/ImageIllustrator"
 import tipoEventoImage from "../../assets/images/tipo-evento.svg";
 import { Input, Button } from "../../components/FormComponents/FormComponents";
 import api, { eventsTypeResource } from "../../Services/Service";
-import TableTp from "./TableTp/TableTp";
+import TableTp from "./TableTP/TableTp"
 import Notification from "../../components/Notification/Notification";
 import Spinner from "../../components/Spinner/Spinner";
 

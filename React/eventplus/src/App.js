@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { UserContext } from "./context/AuthContext";
 
-import Rotas from "./routes/routes";
+import Rotas from "./Routes/routes";
 //importa nosso app encapsulado pelo sistema de roteamento
 
 const App = () => {

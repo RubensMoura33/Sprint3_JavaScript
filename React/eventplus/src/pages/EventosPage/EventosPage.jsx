@@ -38,7 +38,7 @@ const EventosPage = () => {
 
   const [idTipoEvento, setIdTipoEvento] = useState(null);
 
-  const idInstituicao = "c8fd6bcf-2e69-4726-8257-52b78dd38580";
+  const idInstituicao = "95a14fc6-240a-470e-9c8d-f6863772d99b";
 
   //NOtify
 
