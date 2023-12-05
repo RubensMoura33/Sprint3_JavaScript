@@ -7,7 +7,7 @@ import Container from "../../components/Container/Container";
 import { Select } from "../../components/FormComponents/FormComponents";
 import Spinner from "../../components/Spinner/Spinner";
 import Modal from "../../components/Modal/Modal";
-import api, { eventsResource } from "../../Services/Service";
+import api, { eventsResource, myEventsResource } from "../../Services/Service";
 
 import "./EventosAlunoPage.css";
 import { UserContext } from "../../context/AuthContext";
@@ -15,18 +15,14 @@ import { UserContext } from "../../context/AuthContext";
 const EventosAlunoPage = () => {
   // state do menu mobile
   const [exibeNavbar, setExibeNavbar] = useState(false);
-  const [eventos, setEventos] = useState([
-    { idEvento: "12345", nomeEvento: "Rubens Brabo", dataEvento: "20/11/2024" },
-    { idEvento: "12345", nomeEvento: "Russo Brabo", dataEvento: "20/11/2024" },
-    { idEvento: "12345", nomeEvento: "Gabriel Victor Brabo", dataEvento: "20/11/2024" }
-  ]);
+  const [eventos, setEventos] = useState([]);
   // select mocado
   const [quaisEventos, setQuaisEventos] = useState([
     { value: 1, text: "Todos os eventos" },
     { value: 2, text: "Meus eventos" },
   ]);
 
-  const [tipoEvento, setTipoEvento] = useState(1); //código do tipo do Evento escolhido
+  const [tipoEvento, setTipoEvento] = useState(''); //código do tipo do Evento escolhido
   const [showSpinner, setShowSpinner] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
@@ -34,31 +30,69 @@ const EventosAlunoPage = () => {
   const { userData, setUserData } = useContext(UserContext);
 
   useEffect(() => {
-    
 
-
+    loadEventsType()
 
   }, [tipoEvento]);
 
+  const verificaPresenca = (arrAllEvents, eventsUser) =>{
+    for(let x = 0; x < arrAllEvents.length; x++ ){
+      for(let i = 0; i< eventsUser.length; i++){
+        if (arrAllEvents[x].idEvento === eventsUser[i].idEvento) {
+          arrAllEvents[x].situacao = true;
+          break;
+        }
+      }
+    }
+  }
+
   async function loadEventsType() {
     setShowSpinner(true)
+    setEventos([]);
 
-    if (tipoEvento == 1) {
+    if (tipoEvento === "1") {
 
-      const retorno = await api.get(eventsResource)
-      setEventos(retorno.data)
+      try {
+        const retorno = await api.get(eventsResource)
+        setEventos(retorno.data)
+        console.log(retorno.data);
+
+      } catch (error) {
+        console.log('Erro na api');
+        console.log(error);
+      }
+    }
+
+    else if ( tipoEvento === "2") {
+      try {
+        const retorno = await api.get(`${myEventsResource}/${userData.userId}`);
+        console.log(retorno.data);
+
+        const arrEventos = [];//array vazio
+
+        retorno.data.forEach( e => {
+          arrEventos.push(e.evento)
+        });
+        setEventos(arrEventos)
+
+        console.log(arrEventos);
+      } catch (error) {
+        console.log('Erro na api');
+        console.log(error);
+      }
     }
 
     else{
-      const retornoEventos = await api.get(`${myEventsResource}`)
+      setEventos([])
     }
-    
+
     setShowSpinner(false)
   }
 
 
   // toggle meus eventos ou todos os eventos
   function myEvents(tpEvent) {
+    setTipoEvento(tpEvent)
   }
 
   async function loadMyComentary(idComentary) {
