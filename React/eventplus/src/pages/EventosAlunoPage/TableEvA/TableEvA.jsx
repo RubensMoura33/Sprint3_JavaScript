@@ -64,10 +64,10 @@ const Table = ({ dados, fnConnect = null, fnShowModal = null }) => {
               <td className="tbal-data__data tbal-data__data--big tbal-data__btn-actions">
                 <img
                   className="tbal-data__icon"
-                  idevento={e.idEvento}
+                  // idevento={e.idEvento}
                   src={comentaryIcon}
                   alt=""
-                  onClick={fnShowModal}
+                onClick={() => {fnShowModal(e.idEvento)}}
                 />
 
                 <ToggleSwitch toggleActive={e.situacao} manipulationFunction={() => {(fnConnect(e.idEvento, e.situacao ? "unconnect" : "connect", e.situacao ? e.idPresencaEvento: null))}} />

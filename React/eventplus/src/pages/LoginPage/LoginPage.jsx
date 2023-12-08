@@ -10,7 +10,7 @@ import { UserContext, userDecodeToken } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
-  const [user, setUser] = useState({email: "", senha: ""});
+  const [user, setUser] = useState({email: "moura@admin.com", senha: "123456"});
   const {userData, setUserData} = useContext(UserContext);// importa os dados globais do usuario
   const navigate  = useNavigate();
 

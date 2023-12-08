@@ -7,7 +7,7 @@ import Container from "../../components/Container/Container";
 import { Select } from "../../components/FormComponents/FormComponents";
 import Spinner from "../../components/Spinner/Spinner";
 import Modal from "../../components/Modal/Modal";
-import api, { eventsResource, myEventsResource, presencesEventsResource } from "../../Services/Service";
+import api, { commentaryEventIdResource, commentaryEventResource, eventsResource, myEventsResource, presencesEventsResource } from "../../Services/Service";
 
 import "./EventosAlunoPage.css";
 import { UserContext } from "../../context/AuthContext";
@@ -21,6 +21,9 @@ const EventosAlunoPage = () => {
     { value: 1, text: "Todos os eventos" },
     { value: 2, text: "Meus eventos" },
   ]);
+
+  const [idEvento, setIdEvento] =useState(null)
+  const [comentario, setComentario] = useState('')
 
   const [tipoEvento, setTipoEvento] = useState(''); //código do tipo do Evento escolhido
   const [showSpinner, setShowSpinner] = useState(false);
@@ -110,14 +113,31 @@ const EventosAlunoPage = () => {
     setTipoEvento(tpEvent)
   }
 
-  async function loadMyComentary(idComentary) {
-    return "????";
+  //ler um comentario
+  const loadMyCommentary = async (idUsuario, idEvento) => {
+
+    const promise = await api.get(commentaryEventIdResource + '?idUsuario='+ idUsuario +'&idEvento='+ idEvento);
+    console.log(promise.data);
+    setComentario(promise.data.descricao)
   }
 
-  const showHideModal = () => {
+  //ler um comentario
+  const  postMyCommentary = async (e) => {
+    e.preventDefault();
+    const promise = await api.post(commentaryEventResource,{
+    descricao: "Muito bom",
+    exibe: true,
+    idUsuario: "64ac0a32-53a7-425c-a0f0-08dbf4b84e50",
+    idEvento: "3b7acd3c-0837-45c6-9f2c-8effa649c59b"
+    })
+  }
+
+  const showHideModal = (idEvent) => {
     setShowModal(showModal ? false : true);
+    setUserData( {...userData, idEvento : idEvent});
   };
 
+  //Remove o comentario
   const commentaryRemove = () => {
     alert("Remover o comentário");
   };
@@ -132,9 +152,9 @@ const EventosAlunoPage = () => {
           idEvento : eventId})
 
           if (promise.status === 201) {
-            alert('Presenca confirmada')
-          }
-          loadEventsType()
+            
+          }loadEventsType()
+          
         return;
       } catch (error) {
         console.log(error);
@@ -149,7 +169,7 @@ const EventosAlunoPage = () => {
         const rota = await api.delete(presencesEventsResource + "/" + presencaId)
         
         if (rota.status === 204) {
-          alert('desconectado')
+          
         }
         loadEventsType()
 
@@ -173,15 +193,13 @@ const EventosAlunoPage = () => {
             required={true}
             options={quaisEventos} // aqui o array dos tipos
             manipulationFunction={(e) => myEvents(e.target.value)} // aqui só a variável state
-            defaultValue={tipoEvento}
+            value={tipoEvento}
             addtionalClass="select-tp-evento"
           />
           <Table
             dados={eventos}
             fnConnect={handleConnect}
-            fnShowModal={() => {
-              showHideModal();
-            }}
+            fnShowModal={showHideModal}
           />
         </Container>
       </MainContent>
@@ -193,7 +211,11 @@ const EventosAlunoPage = () => {
         <Modal
           userId={userData.userId}
           showHideModal={showHideModal}
+          fnGet={loadMyCommentary}
+          fnPost={postMyCommentary}
           fnDelete={commentaryRemove}
+          comentaryText={comentario}
+
         />
       ) : null}
     </>
