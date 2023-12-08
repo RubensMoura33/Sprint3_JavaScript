@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import trashDelete from "../../assets/images/trash-delete-red.png";
 import { UserContext } from "../../context/AuthContext";
 
@@ -16,25 +16,25 @@ const Modal = ({
 
 }) => {
 
-  const {userData} = useContext(UserContext)
+  const { userData } = useContext(UserContext)
   console.clear();
   console.log(userData);
+  const [descricao, setDescricao] = useState ("")
 
   useEffect(() => {
-    async function carregarDados ()
-    {
+    async function carregarDados() {
       fnGet(userData.userId, userData.idEvento);
     }
     carregarDados();
-  },[])
+  }, [])
 
   return (
     <div className="modal">
       <article className="modal__box">
-        
+
         <h3 className="modal__title">
           {modalTitle}
-          <span className="modal__close" onClick={()=> showHideModal(true)}>x</span>
+          <span className="modal__close" onClick={() => showHideModal(true)}>x</span>
         </h3>
 
         <div className="comentary">
@@ -43,7 +43,7 @@ const Modal = ({
             src={trashDelete}
             className="comentary__icon-delete"
             alt="Ícone de uma lixeira"
-            onClick={() => {fnDelete()}}
+            onClick={() => { fnDelete() }}
           />
 
           <p className="comentary__text">{comentaryText}</p>
@@ -53,14 +53,18 @@ const Modal = ({
 
         <Input
           placeholdder={"Escreva seu comentario ... "}
+          value={descricao}
+          manipulationFunction={(e) => {
+            setDescricao(e.target.value);
+          }}
           className="comentary__entry"
         />
 
         <Button
           textButton="Comentar"
           additio0nalClass="comentary__button"
-          manipulationFunction={() => {fnPost()}}
-          
+          manipulationFunction={() => { fnPost(descricao.trim(), userData.userId, userData.idEvento) }}
+
         />
       </article>
     </div>

@@ -22,7 +22,7 @@ const EventosAlunoPage = () => {
     { value: 2, text: "Meus eventos" },
   ]);
 
-  const [idEvento, setIdEvento] =useState(null)
+  const [idEvento, setIdEvento] = useState(null)
   const [comentario, setComentario] = useState('')
 
   const [tipoEvento, setTipoEvento] = useState(''); //código do tipo do Evento escolhido
@@ -38,10 +38,10 @@ const EventosAlunoPage = () => {
 
   }, [tipoEvento, userData.userId]);
 
-  const verificaPresenca = (arrAllEvents, eventsUser) =>{
-    for(let x = 0; x < arrAllEvents.length; x++ ){//para cada evento principal
+  const verificaPresenca = (arrAllEvents, eventsUser) => {
+    for (let x = 0; x < arrAllEvents.length; x++) {//para cada evento principal
       arrAllEvents[x].situacao = false;
-      for(let i = 0; i< eventsUser.length; i++){//procurar a correspondencia em minhas presencas
+      for (let i = 0; i < eventsUser.length; i++) {//procurar a correspondencia em minhas presencas
         if (arrAllEvents[x].idEvento === eventsUser[i].idEvento) {
           arrAllEvents[x].situacao = true;
           arrAllEvents[x].idPresencaEvento = eventsUser[i].idPresencaEvento
@@ -61,8 +61,8 @@ const EventosAlunoPage = () => {
       try {
         const retornoEvents = await api.get(eventsResource);
         const retornoMyEvents = await api.get(`${myEventsResource}/${userData.userId}`);
-        
-        const eventosMarcados = verificaPresenca(retornoEvents.data , retornoMyEvents.data);
+
+        const eventosMarcados = verificaPresenca(retornoEvents.data, retornoMyEvents.data);
         setEventos(eventosMarcados);
 
         console.clear();
@@ -81,15 +81,15 @@ const EventosAlunoPage = () => {
       }
     }
 
-    else if ( tipoEvento === "2") {
+    else if (tipoEvento === "2") {
       try {
         const retorno = await api.get(`${myEventsResource}/${userData.userId}`);
         console.log(retorno.data);
 
         const arrEventos = [];//array vazio
 
-        retorno.data.forEach( e => {
-          arrEventos.push({... e.evento, situacao : e.situacao, idPresencaEvento : e.idPresencaEvento})
+        retorno.data.forEach(e => {
+          arrEventos.push({ ...e.evento, situacao: e.situacao, idPresencaEvento: e.idPresencaEvento })
         });
         setEventos(arrEventos)
 
@@ -100,7 +100,7 @@ const EventosAlunoPage = () => {
       }
     }
 
-    else{
+    else {
       setEventos([])
     }
 
@@ -116,25 +116,33 @@ const EventosAlunoPage = () => {
   //ler um comentario
   const loadMyCommentary = async (idUsuario, idEvento) => {
 
-    const promise = await api.get(commentaryEventIdResource + '?idUsuario='+ idUsuario +'&idEvento='+ idEvento);
-    console.log(promise.data);
+    const promise = await api.get(commentaryEventIdResource + '?idUsuario=' + idUsuario + '&idEvento=' + idEvento);
+    console.log(promise.data.descricao);
     setComentario(promise.data.descricao)
   }
 
   //ler um comentario
-  const  postMyCommentary = async (e) => {
-    e.preventDefault();
-    const promise = await api.post(commentaryEventResource,{
-    descricao: "Muito bom",
-    exibe: true,
-    idUsuario: "64ac0a32-53a7-425c-a0f0-08dbf4b84e50",
-    idEvento: "3b7acd3c-0837-45c6-9f2c-8effa649c59b"
+  const postMyCommentary = async (descricao, idUsuario, idEvento) => {
+
+    const promise = await api.post(commentaryEventResource, {
+      descricao: descricao,
+      exibe: true,
+      idUsuario: idUsuario,
+      idEvento: idEvento
     })
+    console.log(descricao, idUsuario, idEvento);
+    console.log(promise.data);
+    if (promise.status === 201) {
+
+      const promise = await api.get(commentaryEventIdResource + '?idUsuario=' + idUsuario + '&idEvento=' + idEvento);
+      console.log(promise.data.descricao);
+      setComentario(promise.data.descricao)
+    }
   }
 
   const showHideModal = (idEvent) => {
     setShowModal(showModal ? false : true);
-    setUserData( {...userData, idEvento : idEvent});
+    setUserData({ ...userData, idEvento: idEvent });
   };
 
   //Remove o comentario
@@ -146,30 +154,31 @@ const EventosAlunoPage = () => {
 
     if (whatTheFunction === "connect") {
       try {
-        const promise = await api.post(presencesEventsResource,{
-          situacao : true,
-          idUsuario : userData.userId,
-          idEvento : eventId})
+        const promise = await api.post(presencesEventsResource, {
+          situacao: true,
+          idUsuario: userData.userId,
+          idEvento: eventId
+        })
 
-          if (promise.status === 201) {
-            
-          }loadEventsType()
-          
+        if (promise.status === 201) {
+
+        } loadEventsType()
+
         return;
       } catch (error) {
         console.log(error);
       }
-      
+
     }
 
     else if (whatTheFunction === "unconnect") {
 
       try {
-    
+
         const rota = await api.delete(presencesEventsResource + "/" + presencaId)
-        
+
         if (rota.status === 204) {
-          
+
         }
         loadEventsType()
 
@@ -177,7 +186,7 @@ const EventosAlunoPage = () => {
         console.log(error);
       }
     }
-    
+
   }
   return (
     <>
@@ -215,7 +224,6 @@ const EventosAlunoPage = () => {
           fnPost={postMyCommentary}
           fnDelete={commentaryRemove}
           comentaryText={comentario}
-
         />
       ) : null}
     </>
