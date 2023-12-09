@@ -8,6 +8,7 @@ import { Select } from "../../components/FormComponents/FormComponents";
 import Spinner from "../../components/Spinner/Spinner";
 import Modal from "../../components/Modal/Modal";
 import api, { commentaryEventIdResource, commentaryEventResource, eventsResource, myEventsResource, presencesEventsResource } from "../../Services/Service";
+import Notification from "../../components/Notification/Notification";
 
 import "./EventosAlunoPage.css";
 import { UserContext } from "../../context/AuthContext";
@@ -32,6 +33,9 @@ const EventosAlunoPage = () => {
   // recupera os dados globais do usuário
   const { userData, setUserData } = useContext(UserContext);
 
+  //Notify
+  const [notifyUser, setNotifyUser] = useState();
+
   useEffect(() => {
 
     loadEventsType()
@@ -50,6 +54,16 @@ const EventosAlunoPage = () => {
       }
     }
     return arrAllEvents;
+  }
+
+  function Notify(titleNote, textNote, imgIcon, imgAlt) {
+    setNotifyUser({
+      titleNote,
+      textNote,
+      imgIcon,
+      imgAlt,
+      showMessage: true,
+    });
   }
 
   async function loadEventsType() {
@@ -116,27 +130,59 @@ const EventosAlunoPage = () => {
   //ler um comentario
   const loadMyCommentary = async (idUsuario, idEvento) => {
 
-    const promise = await api.get(commentaryEventIdResource + '?idUsuario=' + idUsuario + '&idEvento=' + idEvento);
-    console.log(promise.data.descricao);
-    setComentario(promise.data.descricao)
+    try {
+      const promise = await api.get(commentaryEventIdResource + '?idUsuario=' + idUsuario + '&idEvento=' + idEvento);
+      console.log(promise.data);
+      setComentario(promise.data.descricao)
+
+    } catch (error) {
+
+      Notify(
+        "Erro",
+        "Verifique a conexão com a internet",
+        "danger",
+        "Imagem de erro. Rapaz segurando um balão com símbolo x"
+      );
+      console.log(error);
+      return;
+      
+    }
   }
 
   //ler um comentario
   const postMyCommentary = async (descricao, idUsuario, idEvento) => {
 
-    const promise = await api.post(commentaryEventResource, {
-      descricao: descricao,
-      exibe: true,
-      idUsuario: idUsuario,
-      idEvento: idEvento
-    })
-    console.log(descricao, idUsuario, idEvento);
-    console.log(promise.data);
-    if (promise.status === 201) {
+    try {
+      const promise = await api.post(commentaryEventResource, {
+        descricao: descricao,
+        exibe: true,
+        idUsuario: idUsuario,
+        idEvento: idEvento
+      })
+      console.log(descricao, idUsuario, idEvento);
+      console.log(promise.data);
+      if (promise.status === 201) {
 
-      const promise = await api.get(commentaryEventIdResource + '?idUsuario=' + idUsuario + '&idEvento=' + idEvento);
-      console.log(promise.data.descricao);
-      setComentario(promise.data.descricao)
+        const promise = await api.get(commentaryEventIdResource + '?idUsuario=' + idUsuario + '&idEvento=' + idEvento);
+        console.log(promise.data);
+        setComentario(promise.data.descricao)
+        Notify(
+          "Sucess",
+          "Comentario cadastrado com sucesso",
+          "success",
+          "Imagem de sucesso. Moça segurando balão"
+        );
+      }
+    } catch (error) {
+
+      Notify(
+        "Erro",
+        "O cadastro deve ter no mínimo 3 caracteres",
+        "warning",
+        "Imagem de aviso. Boneco batendo na exclamação"
+      );
+      console.log(error);
+      return;
     }
   }
 
@@ -146,8 +192,39 @@ const EventosAlunoPage = () => {
   };
 
   //Remove o comentario
-  const commentaryRemove = () => {
-    alert("Remover o comentário");
+  const commentaryRemove = async (idComentarioEvento, idUsuario, idEvento) => {
+
+    try {
+      
+      const GetById = await api.get(commentaryEventIdResource + '?idUsuario=' + idUsuario + '&idEvento=' + idEvento);
+      idComentarioEvento = GetById.data.idComentarioEvento
+
+      const promise = await api.delete(commentaryEventResource + '/' + idComentarioEvento)
+      if (promise.status === 204) {
+
+        const GetDesc = await api.get(commentaryEventIdResource + '?idUsuario=' + idUsuario + '&idEvento=' + idEvento);
+        console.log(promise.data);
+        setComentario(GetDesc.data.descricao)
+        Notify(
+          "Sucess",
+          "Excluido com sucesso",
+          "success",
+          "Imagem de sucesso. Moça segurando balão"
+        );
+      }
+
+    } catch (error) {
+
+      Notify(
+        "Erro",
+        "Nenhum comentario para ser excluido",
+        "danger",
+        "Imagem de erro. Boneco batendo na exclamação"
+      );
+      console.log(error);
+      return;
+    }
+
   };
 
   async function handleConnect(eventId, whatTheFunction, presencaId = null) {
@@ -166,7 +243,15 @@ const EventosAlunoPage = () => {
 
         return;
       } catch (error) {
+
+        Notify(
+          "Erro",
+          "O cadastro deve ter no mínimo 3 caracteres",
+          "warning",
+          "Imagem de aviso. Boneco batendo na exclamação"
+        );
         console.log(error);
+        return;
       }
 
     }
@@ -183,7 +268,15 @@ const EventosAlunoPage = () => {
         loadEventsType()
 
       } catch (error) {
+
+        Notify(
+          "Erro",
+          "O cadastro deve ter no mínimo 3 caracteres",
+          "warning",
+          "Imagem de aviso. Boneco batendo na exclamação"
+        );
         console.log(error);
+        return;
       }
     }
 
@@ -191,7 +284,7 @@ const EventosAlunoPage = () => {
   return (
     <>
       {/* <Header exibeNavbar={exibeNavbar} setExibeNavbar={setExibeNavbar} /> */}
-
+      {<Notification {...notifyUser} setNotifyUser={setNotifyUser} />}
       <MainContent>
         <Container>
           <Title titleText={"Eventos"} className="custom-title" />

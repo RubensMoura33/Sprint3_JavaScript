@@ -19,7 +19,10 @@ const Modal = ({
   const { userData } = useContext(UserContext)
   console.clear();
   console.log(userData);
+
+
   const [descricao, setDescricao] = useState ("")
+  const [idComentarioEvento, setIdComentarioEvento] = useState ('');
 
   useEffect(() => {
     async function carregarDados() {
@@ -43,7 +46,7 @@ const Modal = ({
             src={trashDelete}
             className="comentary__icon-delete"
             alt="Ícone de uma lixeira"
-            onClick={() => { fnDelete() }}
+            onClick={() => { fnDelete(idComentarioEvento, userData.userId, userData.idEvento) }}
           />
 
           <p className="comentary__text">{comentaryText}</p>
