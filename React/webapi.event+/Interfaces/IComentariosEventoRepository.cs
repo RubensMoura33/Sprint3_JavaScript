@@ -8,5 +8,9 @@ namespace webapi.event_.Interfaces
         void Deletar(Guid id);
         List<ComentariosEvento> Listar();
         ComentariosEvento BuscarPorId(Guid id);
+
+ 
+
+
     }
 }

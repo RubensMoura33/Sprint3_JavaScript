@@ -62,7 +62,7 @@ namespace webapi.event_.Repositories
             {
                 throw;
             }
-            
+
         }
 
         public void Deletar(Guid id)
@@ -82,7 +82,7 @@ namespace webapi.event_.Repositories
             {
                 throw;
             }
-            
+
         }
 
         public List<Evento> Listar()
@@ -90,26 +90,26 @@ namespace webapi.event_.Repositories
             try
             {
                 return _context.Evento.Select(e => new Evento
-                { 
-                IdEvento= e.IdEvento,
-                NomeEvento = e.NomeEvento,
-                Descricao = e.Descricao,
-                DataEvento = e.DataEvento,
-                IdTipoEvento = e.IdTipoEvento,
-                TiposEvento = new TiposEvento
-
-                { 
-                    IdTipoEvento = e.IdTipoEvento,
-                    Titulo = e.TiposEvento!.Titulo
-                },
-
-                IdInstituicao = e.IdInstituicao,
-                Instituicao = new Instituicao
-
                 {
+                    IdEvento = e.IdEvento,
+                    NomeEvento = e.NomeEvento,
+                    Descricao = e.Descricao,
+                    DataEvento = e.DataEvento,
+                    IdTipoEvento = e.IdTipoEvento,
+                    TiposEvento = new TiposEvento
+
+                    {
+                        IdTipoEvento = e.IdTipoEvento,
+                        Titulo = e.TiposEvento!.Titulo
+                    },
+
                     IdInstituicao = e.IdInstituicao,
-                    NomeFantasia = e.Instituicao!.NomeFantasia
-                }
+                    Instituicao = new Instituicao
+
+                    {
+                        IdInstituicao = e.IdInstituicao,
+                        NomeFantasia = e.Instituicao!.NomeFantasia
+                    }
                 }).ToList();
             }
             catch (Exception)
@@ -123,12 +123,26 @@ namespace webapi.event_.Repositories
             try
             {
                 return _context.Evento
-                    .Where(e => e.DataEvento > DateTime.Now).OrderBy(e=> e.DataEvento).ToList();
+                    .Where(e => e.DataEvento > DateTime.Now).OrderBy(e => e.DataEvento).ToList();
             }
             catch (Exception)
             {
                 throw;
             }
         }
+
+        public List<Evento> ListarAnteriores()
+        {
+            try
+            {
+                return _context.Evento
+                    .Where(e => e.DataEvento < DateTime.Now).OrderBy(e => e.DataEvento).ToList();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
     }
 }

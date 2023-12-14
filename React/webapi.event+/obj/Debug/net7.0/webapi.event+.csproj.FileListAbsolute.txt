@@ -1300,3 +1300,6 @@ C:\Users\raulc\OneDrive\Área de Trabalho\Sprint3_JavaScript\React\webapi.event+
 C:\Users\raulc\OneDrive\Área de Trabalho\Sprint3_JavaScript\React\webapi.event+\obj\Debug\net7.0\webapi.event+.pdb
 C:\Users\raulc\OneDrive\Área de Trabalho\Sprint3_JavaScript\React\webapi.event+\obj\Debug\net7.0\webapi.event+.genruntimeconfig.cache
 C:\Users\raulc\OneDrive\Área de Trabalho\Sprint3_JavaScript\React\webapi.event+\obj\Debug\net7.0\ref\webapi.event+.dll
+C:\Users\50496884859\Desktop\Sprint3_JavaScript\React\webapi.event+\bin\Debug\net7.0\Microsoft.Azure.CognitiveServices.ContentModerator.dll
+C:\Users\50496884859\Desktop\Sprint3_JavaScript\React\webapi.event+\bin\Debug\net7.0\Microsoft.Rest.ClientRuntime.dll
+C:\Users\50496884859\Desktop\Sprint3_JavaScript\React\webapi.event+\bin\Debug\net7.0\Microsoft.Rest.ClientRuntime.Azure.dll
